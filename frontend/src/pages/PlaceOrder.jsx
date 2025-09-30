@@ -5,7 +5,7 @@ import Title from "../components/Title"
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { currency } from "../../../admin/src/App";
+// import { currency } from "../../../admin/src/App";
 
 
 const PlaceOrder = () => {
