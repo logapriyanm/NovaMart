@@ -15,6 +15,7 @@ import LikedProducts from "./pages/LikedProducts";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Verify from './pages/Verify'
+import Profile from './pages/Profile'
 
 
 
@@ -38,6 +39,7 @@ function App() {
       <Route path='/orders' element={<Orders/>}/>
       <Route path="/likedproducts" element={<LikedProducts />} />
       <Route path="/verify" element={<Verify />} />
+      <Route path="/profile" element={<Profile />} />
 
     </Routes>
     <Footer/>

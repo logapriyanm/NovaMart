@@ -12,13 +12,13 @@ orderRouter.post('/status',adminAuth, updateStatus)
 // Payment Routes
 orderRouter.post('/place',authUser,placeOrder)
 orderRouter.post('/stripe',authUser,placeOrderStripe)
-// orderRouter.post('/razorpay',authUser,placeOrderRazorpay)
+
 
 // User Routes
 orderRouter.post('/userorders',authUser,userOrders)
 
 // Verify Payment Routes
 orderRouter.post('/verifyStripe',authUser,verifyStripe)
-// orderRouter.post('/verifyRazorpay',authUser,verifyRazorpay)
+
 
 export default orderRouter

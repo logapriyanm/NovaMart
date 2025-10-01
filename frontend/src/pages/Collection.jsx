@@ -71,7 +71,7 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, subCategory, search, showSearch,products]);
+  }, [category, subCategory, search, showSearch, products]);
 
   useEffect(() => {
     sortProduct();
@@ -104,6 +104,8 @@ const Collection = () => {
               <label><input type="checkbox" value='Sports' onChange={toggleCategory} /> Sports</label>
               <label><input type="checkbox" value='Books' onChange={toggleCategory} /> Books</label>
               <label><input type="checkbox" value='Laptops' onChange={toggleCategory} /> Laptops</label>
+              <label><input type="checkbox" value='Accessories' onChange={toggleCategory} /> Accessories</label>
+              <label><input type="checkbox" value='Others' onChange={toggleCategory} /> Others</label>
             </div>
 
           </div>
@@ -113,15 +115,15 @@ const Collection = () => {
             <p className='mb-3 text-sm font-medium'>TYPE</p>
             <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
               {/* Fashion */}
-              <label><input type="checkbox" value='men' onChange={toggleSubCategory} /> Men</label>
-              <label><input type="checkbox" value='women' onChange={toggleSubCategory} /> Women</label>
-              <label><input type="checkbox" value='kids' onChange={toggleSubCategory} /> Kids</label>
-              
+              <label><input type="checkbox" value='Men' onChange={toggleSubCategory} /> Men</label>
+              <label><input type="checkbox" value='Women' onChange={toggleSubCategory} /> Women</label>
+              <label><input type="checkbox" value='Kids' onChange={toggleSubCategory} /> Kids</label>
+
 
               {/* Electronics */}
               <label><input type="checkbox" value='Mobile' onChange={toggleSubCategory} /> Mobile</label>
               <label><input type="checkbox" value='Laptops' onChange={toggleSubCategory} /> Laptops</label>
-              <label><input type="checkbox" value='Accessories' onChange={toggleSubCategory} /> Accessories</label>
+
 
               {/* Home & Furniture */}
               <label><input type="checkbox" value='Dining' onChange={toggleSubCategory} /> Dining</label>
@@ -132,8 +134,7 @@ const Collection = () => {
               <label><input type="checkbox" value='Indoor' onChange={toggleSubCategory} /> Indoor</label>
 
               {/* Books */}
-              <label><input type="checkbox" value='Fiction' onChange={toggleSubCategory} /> Fiction</label>
-              <label><input type="checkbox" value='Non-Fiction' onChange={toggleSubCategory} /> Non-Fiction</label>
+              <label><input type="checkbox" value='Others' onChange={toggleSubCategory} /> Others</label>
             </div>
 
           </div>

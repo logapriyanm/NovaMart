@@ -14,7 +14,7 @@ const ProductItem = ({ id, image, name, price }) => {
       <Link to={`/product/${id}`} className="overflow-hidden block">
         <img
           src={image[0]}
-          className="hover:scale-105 transition-transform w-full"
+          className="hover:scale-105 h-[250px] transition-transform w-full"
           alt={name}
         />
       </Link>

@@ -7,11 +7,11 @@ const Contact = () => {
   return (
     <div>
 
-      <div className='text-2xl text-center p-10 border-t'>
+      <div className='text-2xl text-center py-20 border-t'>
         <Title text1={'Contact'} text2={'Us'} />
       </div>
 
-      <div className="my-10 flex flex-col md:flex-row items-center justify-center gap-10 mb-28">
+      <div className="my-2 flex flex-col md:flex-row items-center justify-center gap-10 mb-28">
         {/* Left Image */}
         <img
           className="w-full md:max-w-[480px]"
@@ -23,7 +23,7 @@ const Contact = () => {
         <div className="flex flex-col justify-center items-start gap-6 text-start">
           <p className="font-semibold text-xl text-gray-600">Our Store</p>
           <p className="text-gray-500">
-            54709 Willms Station <br /> Suite 350, Washington, USA
+           34, MGR Street <br /> Erode bus stand, Erode
           </p>
           <p className="text-gray-500">
             Contact: 7904074107 <br /> Email: logapriyanvky@gmail.com

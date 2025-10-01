@@ -45,7 +45,7 @@ const Product = () => {
           </div>
 
           <div className="w-full sm:w-[80%] ">
-            <img src={image} className="w-full h-auto" alt="" />
+            <img src={image} className="w-full h-[400px] md:h-[600px] object-cover rounded-lg" alt="" />
           </div>
         </div>
 
@@ -61,25 +61,28 @@ const Product = () => {
           <p className="mt-5 text-gray-500 w-4/5">{productData.description}</p>
 
           {/* Sizes */}
-          <div className="flex flex-col gap-4 my-8">
-            <p>Select Size</p>
-            <div className="flex gap-2">
-              {productData.sizes.map((item, index) => (
-                <button
-                  onClick={() => setSize(item)}
-                  className={`border py-2 px-4 border-gray-50 bg-gray-200 ${
-                    item === size ? "border-orange-500 " : ""
-                  }`}
-                  key={index}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
+          {productData.category === "Fashion" &&
+            ["men", "women", "kids"].includes(productData.subCategory.toLowerCase()) && (
+              <div className="flex flex-col gap-4 my-8">
+                <p>Select Size</p>
+                <div className="flex gap-2">
+                  {productData.sizes.map((item, index) => (
+                    <button
+                      onClick={() => setSize(item)}
+                      className={`border py-2 px-4 border-gray-50 bg-gray-200 ${item === size ? "border-orange-500 " : ""
+                        }`}
+                      key={index}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
 
           {/* Buttons */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 my-4">
             <button
               onClick={() => addToCart(productData._id, size)}
               className="bg-primary text-white px-8 py-3 text-sm active:bg-gray-700"

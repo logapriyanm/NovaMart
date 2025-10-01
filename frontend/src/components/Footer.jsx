@@ -7,7 +7,9 @@ const Footer = () => {
                 <div>
                     <p className="text-xl font-medium mb-5">NovaMart</p>
                     <p className="w-full md:w-2/3 text-gray-300">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur, et.
+                        Your one-stop destination for quality products at the best prices.
+                        At NovaMart, we bring you trusted brands, fast delivery, and
+                        a shopping experience designed to make life easier.
                     </p>
                 </div>
                 <div>

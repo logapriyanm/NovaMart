@@ -5,7 +5,6 @@ import Title from "../components/Title"
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-// import { currency } from "../../../admin/src/App";
 
 
 const PlaceOrder = () => {
@@ -31,36 +30,7 @@ const PlaceOrder = () => {
      setFormData(data => ({...data, [name]:value}))
   }
 
-  // const initPay = (order)=>{
-  //   const options = {
-  //     key:import.meta.env.VITE_RAZORPAY_KEY_ID,
-  //     amount:order.amount,
-  //     currency:order.currency,
-  //     name:'Order Payment',
-  //     description:'Order Payment',
-  //     order_id:order.id,
-  //     receipt:order.receipt,
-  //     handler: async (response)=>{
-  //      console.log(response);
-  // try {
-  //   const {data} = await axios.post(backendUrl + '/api/order/verifyRazorpay', response,{headers:{token}})
-  //   if(data.success){
-  //     navigate('orders')
-  //     setCartItems({})
-  //   }
-  // } catch (error) {
-  //   console.log(error);
-  //   toast.error(error)
-    
-  // }
-       
-  //     }
 
-  //   }
-  //   const rzp = new window.Razorpay(options)
-  //   rzp.open()
-  // }
-  
   const onSubmitHandler =async (e)=>{
     e.preventDefault()
 
@@ -111,15 +81,7 @@ const PlaceOrder = () => {
 
         break;
 
-        // case 'razorpay':
-          
-        // const responseRazorpay = await axios.post(backendUrl +'/api/order/razorpay',orderData,{headers:{token}})
-        // if(responseRazorpay.data.success){
-        //  initPay(responseRazorpay.data.order);
-          
-        // }
-
-        // break;
+        
 
         default:
           break;
@@ -173,10 +135,7 @@ const PlaceOrder = () => {
               <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'stripe' ? 'bg-green-400' : ''}`}></p>
               <img src={assets.stripe_logo} alt="" />
             </div>
-            <div onClick={()=>setMethod('paypal')} className=" flex items-center gap-3 border p-2 px-3 cursor-pointer">
-              <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'paypal' ? 'bg-green-400' : ''}`}></p>
-              <img src={assets.razorpay_logo}  />
-            </div>
+          
 
             <div onClick={()=>setMethod('cod')} className=" flex items-center gap-3 border p-2 px-3 cursor-pointer">
               <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'cod' ? 'bg-green-400' : ''}`}></p>
