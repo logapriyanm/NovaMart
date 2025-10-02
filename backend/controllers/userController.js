@@ -21,17 +21,16 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.json({ success: false, message: "Invalid credentials" });
     }
-    const exists = await userModel.findOne({ email });
-    if (exists)
-      return res.json({ success: false, message: "User already exists" });
 
     const token = createToken({ id: user._id, role: "user" });
     res.json({ success: true, token });
+
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
+
 
 // --------------------- REGISTER USER ---------------------
 const registerUser = async (req, res) => {
