@@ -20,8 +20,14 @@ const userSchema = new mongoose.Schema(
       default: {},
     },
     address: {
-      type: String,
-      default: "",
+      firstName: { type: String, default: "" },
+      lastName: { type: String, default: "" },
+      street: { type: String, default: "" },
+      city: { type: String, default: "" },
+      state: { type: String, default: "" },
+      zipcode: { type: String, default: "" },
+      country: { type: String, default: "" },
+      phone: { type: String, default: "" },
     },
     profilePic: {
       type: String,

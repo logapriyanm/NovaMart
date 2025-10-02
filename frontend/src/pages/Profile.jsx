@@ -4,6 +4,7 @@ import axios from "axios";
 import { ShopContext } from "../context/ShopContext";
 import { toast } from "react-toastify";
 
+
 const ProfilePage = () => {
   const { token, backendUrl } = useContext(ShopContext);
   const [user, setUser] = useState(null);
@@ -51,4 +52,5 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+
+export default ProfilePage

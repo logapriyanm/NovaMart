@@ -21,6 +21,9 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.json({ success: false, message: "Invalid credentials" });
     }
+    const exists = await userModel.findOne({ email });
+    if (exists)
+      return res.json({ success: false, message: "User already exists" });
 
     const token = createToken({ id: user._id, role: "user" });
     res.json({ success: true, token });
@@ -99,11 +102,9 @@ const adminLogin = async (req, res) => {
   }
 };
 
-
-
- const getProfile = async (req, res) => {
+const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.body.userId).select("-password");
+    const user = await userModel.findById(req.user.id).select("-password");
     if (!user) {
       return res.json({ success: false, message: "User not found" });
     }
@@ -114,6 +115,27 @@ const adminLogin = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const { name, address, profilePic } = req.body;
 
+    const user = await userModel
+      .findByIdAndUpdate(
+        req.user.id, // comes from auth middleware
+        { name, address, profilePic },
+        { new: true }
+      )
+      .select("-password");
 
-export { loginUser, registerUser, adminLogin,getProfile };
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Error updating profile" });
+  }
+};
+
+export { loginUser, registerUser, adminLogin, getProfile, updateProfile };
