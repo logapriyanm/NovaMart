@@ -1,5 +1,7 @@
 import validator from "validator";
 import bcrypt from "bcrypt";
+import cloudinary from "../config/cloudinary.js";
+
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 // Helper function to create a token
@@ -24,13 +26,11 @@ const loginUser = async (req, res) => {
 
     const token = createToken({ id: user._id, role: "user" });
     res.json({ success: true, token });
-
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
-
 
 // --------------------- REGISTER USER ---------------------
 const registerUser = async (req, res) => {
@@ -116,24 +116,64 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { name, address, profilePic } = req.body;
-
-    const user = await userModel
-      .findByIdAndUpdate(
-        req.user.id, // comes from auth middleware
-        { name, address, profilePic },
-        { new: true }
-      )
-      .select("-password");
+    const userId = req.user.id;
+    const user = await userModel.findById(userId);
 
     if (!user) {
-      return res.json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    res.json({ success: true, user });
+    // ✅ update name if provided
+    if (req.body.name) {
+      user.name = req.body.name;
+    }
+
+    // ✅ handle profilePic
+    if (req.file) {
+      // remove old pic if exists
+      if (user.profilePic) {
+        fs.unlink(user.profilePic, (err) => {
+          if (err) console.error("Error deleting old profile pic:", err.message);
+        });
+      }
+      user.profilePic = req.file.path;
+    }
+
+    // ✅ update address (JSON or FormData)
+    const allowedAddressFields = ["street", "city", "state", "zipcode", "country", "phone"];
+
+    if (req.body.address) {
+      // JSON payload (from PlaceOrder)
+      user.address = {};
+      allowedAddressFields.forEach((field) => {
+        if (req.body.address[field] !== undefined) {
+          user.address[field] = req.body.address[field];
+        }
+      });
+    } else {
+      // FormData payload (from ProfilePage edit)
+      const hasAddress = allowedAddressFields.some((f) => req.body[`address[${f}]`] !== undefined);
+
+      if (hasAddress) {
+        user.address = {};
+        allowedAddressFields.forEach((field) => {
+          if (req.body[`address[${field}]`] !== undefined) {
+            user.address[field] = req.body[`address[${field}]`];
+          }
+        });
+      }
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
   } catch (error) {
-    console.error(error);
-    res.json({ success: false, message: "Error updating profile" });
+    console.error("Update profile error:", error.message, error.stack);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
