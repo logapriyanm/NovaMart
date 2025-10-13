@@ -1,4 +1,4 @@
-// routes/orderRoute.js - CORRECT ROUTES
+// routes/orderRoute.js - FOR DEPLOYED BACKEND
 import express from "express"
 import { 
   placeOrder, 
@@ -13,14 +13,14 @@ import authUser from "../middleware/auth.js"
 
 const orderRouter = express.Router();
 
-// User routes - protected with authUser
+// User routes
 orderRouter.post('/place', authUser, placeOrder);
 orderRouter.post('/stripe', authUser, placeOrderStripe);
-orderRouter.get('/user', authUser, userOrders); // ✅ GET /api/order/user
+orderRouter.get('/user', authUser, userOrders);
 orderRouter.post('/verifyStripe', authUser, verifyStripe);
 
-// Admin routes - protected with adminAuth
-orderRouter.get('/admin/all', adminAuth, allOrders); // ✅ GET /api/order/admin/all
+// Admin routes
+orderRouter.get('/admin/all', adminAuth, allOrders);
 orderRouter.put('/admin/status', adminAuth, updateStatus);
 
 export default orderRouter;

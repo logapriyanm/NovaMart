@@ -1,20 +1,33 @@
-// middleware/adminAuth.js - UPDATED FOR HARD-CODED CREDENTIALS
+// middleware/adminAuth.js - FOR DEPLOYED BACKEND
 import jwt from "jsonwebtoken";
 
 const adminAuth = async (req, res, next) => {
   try {
+    console.log("🛡️ Admin Auth Middleware - Checking token");
+    
     const authHeader = req.headers.authorization || req.headers.Authorization;
-    if (!authHeader) {
-      return res.status(401).json({ success: false, message: "Not Authorized" });
+    
+    let token;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    } else if (authHeader) {
+      token = authHeader;
     }
 
-    const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "No authentication token provided" 
+      });
+    }
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // ✅ Check if token has admin role (no database check)
     if (decoded.role !== "admin") {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res.status(403).json({ 
+        success: false, 
+        message: "Admin access required" 
+      });
     }
 
     req.admin = decoded;
@@ -22,7 +35,10 @@ const adminAuth = async (req, res, next) => {
     next();
   } catch (err) {
     console.log("Admin auth error:", err.message);
-    return res.status(401).json({ success: false, message: "Invalid token" });
+    return res.status(401).json({ 
+      success: false, 
+      message: "Invalid token" 
+    });
   }
 };
 

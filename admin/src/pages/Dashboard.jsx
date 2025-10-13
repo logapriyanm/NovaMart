@@ -35,78 +35,140 @@ const Dashboard = ({ token }) => {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 
-  const fetchDashboardData = async () => {
-    if (!token) return
 
+const fetchDashboardData = async () => {
+  if (!token) {
+    console.error("❌ No token available in Dashboard");
+    toast.error("No authentication token found");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    
+    console.log("🔍 ===== DASHBOARD DEBUG START =====");
+    console.log("🔑 Token available:", token ? "YES" : "NO");
+    console.log("🌐 Backend URL:", backendUrl);
+
+    // Skip health check since endpoint is missing
+    console.log("⚠️ Skipping health check - endpoint not available");
+
+    // Step 1: Test products endpoint (this works)
+    console.log("📦 Step 1: Testing products endpoint...");
+    let productsResponse;
     try {
-      setLoading(true)
+      productsResponse = await axios.get(`${backendUrl}/api/product/list`);
+      console.log("✅ Products endpoint SUCCESS");
+    } catch (productsError) {
+      console.error("❌ Products endpoint FAILED:", productsError.message);
+      toast.error("Failed to load products");
+      return;
+    }
+
+    // Step 2: Test admin orders endpoint
+    console.log("📋 Step 2: Testing admin orders endpoint...");
+    let ordersResponse;
+    try {
+      ordersResponse = await axios.get(`${backendUrl}/api/order/admin/all`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      console.log("✅ Admin orders endpoint SUCCESS:", ordersResponse.data);
+    } catch (ordersError) {
+      console.error("❌ Admin orders endpoint FAILED:", {
+        status: ordersError.response?.status,
+        data: ordersError.response?.data,
+        message: ordersError.message
+      });
       
-      const productsResponse = await axios.get(`${backendUrl}/api/product/list`)
-      const ordersResponse = await axios.get(`${backendUrl}/api/order/admin/all`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      if (ordersError.response?.status === 403) {
+        toast.error("Access denied. Not an admin user.");
+      } else if (ordersError.response?.status === 401) {
+        toast.error("Invalid token. Please login again.");
+      } else {
+        toast.error("Failed to load orders: " + (ordersError.response?.data?.message || ordersError.message));
+      }
+      return;
+    }
 
-      if (productsResponse.data.success && ordersResponse.data.success) {
-        const products = productsResponse.data.products
-        const orders = ordersResponse.data.orders
+    // Step 3: Process data
+    console.log("📊 Step 3: Processing dashboard data...");
+    if (productsResponse.data.success && ordersResponse.data.success) {
+      const products = productsResponse.data.products || [];
+      const orders = ordersResponse.data.orders || [];
 
-        const totalRevenue = orders.reduce((sum, order) => {
-          const orderTotal = order.items?.reduce((orderSum, item) => 
-            orderSum + (item.price * item.quantity), 0) || 0
-          return sum + orderTotal
-        }, 0)
+      console.log("📈 Data received:", {
+        productsCount: products.length,
+        ordersCount: orders.length
+      });
 
-        const pendingOrders = orders.filter(order => 
-          ['Pending', 'Processing', 'Packing'].includes(order.status)
-        ).length
+      // Your data processing code...
+      const totalRevenue = orders.reduce((sum, order) => {
+        const orderTotal = order.items?.reduce((orderSum, item) => 
+          orderSum + (item.price * item.quantity), 0) || 0;
+        return sum + orderTotal;
+      }, 0);
 
-        setStats({
-          totalOrders: orders.length,
-          totalRevenue,
-          totalProducts: products.length,
-          totalCustomers: new Set(orders.map(order => order.userId)).size,
-          pendingOrders,
-        })
+      const pendingOrders = orders.filter(order => 
+        order.status && ['Pending', 'Processing', 'Packing'].includes(order.status)
+      ).length;
 
-        // Recent orders
-        setRecentOrders(orders.slice(0, 3))
+      const customerIds = orders.map(order => order.userId).filter(id => id);
+      const uniqueCustomers = new Set(customerIds).size;
 
-        // Top products
-        const productSales = {}
-        orders.forEach(order => {
-          order.items?.forEach(item => {
+      setStats({
+        totalOrders: orders.length,
+        totalRevenue,
+        totalProducts: products.length,
+        totalCustomers: uniqueCustomers,
+        pendingOrders,
+      });
+
+      // Recent orders
+      const sortedOrders = orders.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+      setRecentOrders(sortedOrders.slice(0, 3));
+
+      // Top products
+      const productSales = {};
+      orders.forEach(order => {
+        order.items?.forEach(item => {
+          if (item.productId) {
             if (!productSales[item.productId]) {
               productSales[item.productId] = {
-                name: item.name,
+                name: item.name || `Product ${item.productId}`,
                 quantity: 0,
                 revenue: 0
-              }
+              };
             }
-            productSales[item.productId].quantity += item.quantity
-            productSales[item.productId].revenue += item.price * item.quantity
-          })
-        })
+            productSales[item.productId].quantity += item.quantity || 0;
+            productSales[item.productId].revenue += (item.price || 0) * (item.quantity || 0);
+          }
+        });
+      });
 
-        const topProductsList = Object.values(productSales)
-          .sort((a, b) => b.quantity - a.quantity)
-          .slice(0, 3)
-        setTopProducts(topProductsList)
+      const topProductsList = Object.values(productSales)
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, 3);
+      setTopProducts(topProductsList);
 
-        // Sales data for charts
-        const monthlySales = generateMonthlySalesData(orders)
-        setSalesData(monthlySales)
+      // Sales data
+      const monthlySales = generateMonthlySalesData(orders);
+      setSalesData(monthlySales);
 
-        // Category data for pie chart
-        const categorySales = generateCategoryData(products, orders)
-        setCategoryData(categorySales)
-      }
-    } catch (error) {
-      console.error("Dashboard error:", error)
-      toast.error("Failed to load dashboard data")
-    } finally {
-      setLoading(false)
+      // Category data
+      const categorySales = generateCategoryData(products, orders);
+      setCategoryData(categorySales);
+
+      console.log("🎉 Dashboard data loaded successfully!");
     }
+  } catch (error) {
+    console.error("💥 Dashboard unexpected error:", error.message);
+    toast.error("Unexpected error: " + error.message);
+  } finally {
+    setLoading(false);
   }
+};
 
   // Generate monthly sales data
   const generateMonthlySalesData = (orders) => {

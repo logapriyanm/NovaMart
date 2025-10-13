@@ -1,9 +1,7 @@
-// server.js (or your main server file)
+// server.js - FOR DEPLOYED BACKEND
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 import connectDB from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
@@ -19,23 +17,50 @@ const port = process.env.PORT || 4000;
 connectCloudinary();
 connectDB();
 
-app.use(express.json());
-// server.js - FIX CORS
+// ✅ CORS configuration for deployed environment
 app.use(cors({
-  origin: [process.env.CLIENT_URL, process.env.ADMIN_URL, "http://localhost:5173"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174', 
+    'https://novamart-ecom.onrender.com',
+    'https://novamart-admin.onrender.com'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
 }));
 
+app.use(express.json());
 
-// ✅ Make sure these routes match what your frontend is calling
+// ✅ API Routes
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
-app.use('/api/cart', cartRouter); // This should match your frontend calls to /api/cart/*
+app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 
-app.get('/', (req, res) => {
-  res.send("API Working");
+// ✅ Essential endpoints
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Server is running',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString()
+  });
 });
 
-app.listen(port, () => console.log(`Server started on PORT: ${port}`));
+// ✅ Admin test endpoint
+app.get('/api/admin/test-auth', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Admin API is working!',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/', (req, res) => {
+  res.send("Novamart API Working with CORS");
+});
+
+app.listen(port, () => {
+  console.log(`🚀 Server started on PORT: ${port}`);
+});
