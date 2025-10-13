@@ -92,14 +92,31 @@ const registerUser = async (req, res) => {
 };
 
 // --------------------- ADMIN LOGIN ---------------------
+// --------------------- ADMIN LOGIN ---------------------
 const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    console.log("🔐 Admin login attempt:", { 
+      email, 
+      expectedEmail: process.env.ADMIN_EMAIL,
+      envLoaded: !!process.env.ADMIN_EMAIL 
+    });
+
+    // Check if environment variables are loaded
+    if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+      console.error("❌ Admin credentials not found in environment");
+      return res.status(500).json({ 
+        success: false, 
+        message: "Admin configuration error" 
+      });
+    }
 
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
       let adminUser = await userModel.findOne({ email: process.env.ADMIN_EMAIL });
       
       if (!adminUser) {
+        console.log("📝 Creating new admin user in database...");
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, salt);
         
@@ -113,11 +130,13 @@ const adminLogin = async (req, res) => {
         console.log("✅ Admin user created in database");
       }
 
-      const token = createToken({ 
+      const token = jwt.sign({ 
         id: adminUser._id, 
         role: "admin", 
         email: adminUser.email 
-      });
+      }, process.env.JWT_SECRET, { expiresIn: "7d" });
+      
+      console.log("✅ Admin login successful");
       
       return res.json({ 
         success: true, 
@@ -131,16 +150,17 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    return res.json({ 
+    console.log("❌ Invalid admin credentials");
+    return res.status(401).json({ 
       success: false, 
       message: "Invalid admin credentials" 
     });
     
   } catch (error) {
-    console.error("Admin login error:", error);
-    res.json({ 
+    console.error("💥 Admin login error:", error);
+    res.status(500).json({ 
       success: false, 
-      message: "Server error during login" 
+      message: "Server error during login: " + error.message 
     });
   }
 };

@@ -8,26 +8,79 @@ const Login = ({ setToken }) => {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const tryLogin = async (endpoint) => {
+    try {
+      console.log(`🔄 Trying endpoint: ${endpoint}`);
+      
+      const response = await axios.post(`${backendUrl}${endpoint}`, {
+        email: email,
+        password: password
+      }, {
+        timeout: 10000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      return response;
+    } catch (error) {
+      console.log(`❌ ${endpoint} failed:`, error.response?.status || error.message);
+      return null;
+    }
+  };
+
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
       setLoading(true)
       
-      const response = await axios.post(backendUrl + '/api/user/admin', { email, password })
+      console.log('🔄 Attempting admin login...', {
+        email: email,
+        backendUrl: backendUrl
+      });
+
+      // Try multiple endpoints in sequence
+      const endpoints = [
+        '/api/user/admin-login',
+        
+      ];
+
+      let response = null;
       
-      if (response.data.success) {
-        setToken(response.data.token)
-        toast.success('Welcome back!')
+      for (const endpoint of endpoints) {
+        response = await tryLogin(endpoint);
+        if (response && response.data.success) {
+          console.log(`✅ Login successful via ${endpoint}`);
+          break;
+        }
+      }
+
+      if (response && response.data.success) {
+        const { token, user } = response.data;
+        setToken(token);
+        
+        // Store in localStorage
+        localStorage.setItem('adminToken', token);
+        localStorage.setItem('adminUser', JSON.stringify(user));
+        
+        toast.success('Welcome back, Admin!');
+        
+        // Redirect to dashboard
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1000);
       } else {
-        toast.error(response.data.message)
+        toast.error('Login failed: No working endpoint found');
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || 'Login failed')
+      console.error('💥 Final login error:', error);
+      toast.error('Login failed: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false)
     }
   }
+
+
 
   return (
     <div className='flex min-h-screen items-center justify-center w-full bg-gradient-to-br from-blue-50 to-gray-100'>
@@ -45,7 +98,7 @@ const Login = ({ setToken }) => {
               value={email} 
               className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all' 
               type="email" 
-              placeholder='admin@example.com' 
+              placeholder='logapriyan@gmail.com' 
               required
             />
           </div>
@@ -57,7 +110,7 @@ const Login = ({ setToken }) => {
               value={password} 
               className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all' 
               type="password" 
-              placeholder='Enter your password' 
+              placeholder='Enter admin password' 
               required
             />
           </div>
@@ -74,6 +127,8 @@ const Login = ({ setToken }) => {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+
+        
       </div>
     </div>
   )

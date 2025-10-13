@@ -1,3 +1,4 @@
+// routes/userRoute.js - FIXED VERSION
 import express from "express";
 import {
   registerUser,
@@ -18,13 +19,16 @@ import {
 } from "../controllers/userController.js";
 import authUser from "../middleware/auth.js";
 import upload from "../middleware/multer.js";
+import userModel from "../models/userModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const userRouter = express.Router();
 
 // Public routes
 userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
-userRouter.post("/admin-login", adminLogin);
+userRouter.post("/admin-login", adminLogin); // Keep both for compatibility
 
 // Protected routes
 userRouter.get("/profile", authUser, getProfile);
@@ -34,26 +38,37 @@ userRouter.put("/update-profile", authUser, upload.single("profilePicture"), upd
 userRouter.post("/wishlist/toggle", authUser, toggleWishlist);
 userRouter.get("/wishlist", authUser, getWishlist);
 
-// Address routes - UPDATED TO MATCH FRONTEND
+// Address routes
 userRouter.get('/addresses', authUser, getAddresses);
-userRouter.post('/addresses', authUser, addAddress); // Changed from '/address/add'
-userRouter.put('/addresses/:addressId', authUser, updateAddress); // Changed from '/address/update/:addressId'
-userRouter.delete('/addresses/:addressId', authUser, deleteAddress); // Changed from '/address/delete/:addressId'
-userRouter.patch('/addresses/:addressId/default', authUser, setDefaultAddress); // Changed from PUT to PATCH
+userRouter.post('/addresses', authUser, addAddress);
+userRouter.put('/addresses/:addressId', authUser, updateAddress);
+userRouter.delete('/addresses/:addressId', authUser, deleteAddress);
+userRouter.patch('/addresses/:addressId/default', authUser, setDefaultAddress);
 
 // Account management routes
 userRouter.post('/change-password', authUser, changePassword);
 userRouter.put('/preferences', authUser, updatePreferences);
 userRouter.delete('/account', authUser, deleteAccount);
 
-
-// Add this to your userRoute.js or server.js
-userRouter.post('/api/admin/test-login', async (req, res) => {
+// Test endpoint for debugging admin login
+userRouter.post('/admin-test', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    console.log("🧪 Testing admin login with:", { email });
-    
+    console.log("🔍 ADMIN TEST LOGIN REQUEST:", { 
+      email, 
+      expectedEmail: process.env.ADMIN_EMAIL,
+      envLoaded: !!process.env.ADMIN_EMAIL 
+    });
+
+    // Check environment variables
+    if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+      return res.status(500).json({
+        success: false,
+        message: "Admin credentials not configured in environment"
+      });
+    }
+
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
       let adminUser = await userModel.findOne({ email: process.env.ADMIN_EMAIL });
       
@@ -70,8 +85,6 @@ userRouter.post('/api/admin/test-login', async (req, res) => {
         });
         await adminUser.save();
         console.log("✅ Admin user created successfully");
-      } else {
-        console.log("✅ Existing admin user found:", adminUser);
       }
 
       const token = jwt.sign({ 
@@ -80,7 +93,7 @@ userRouter.post('/api/admin/test-login', async (req, res) => {
         email: adminUser.email 
       }, process.env.JWT_SECRET, { expiresIn: "7d" });
       
-      console.log("🎫 Token generated with role:", "admin");
+      console.log("✅ Admin login successful");
       
       return res.json({ 
         success: true, 
@@ -95,14 +108,14 @@ userRouter.post('/api/admin/test-login', async (req, res) => {
     }
 
     console.log("❌ Invalid admin credentials");
-    return res.json({ 
+    return res.status(401).json({ 
       success: false, 
       message: "Invalid admin credentials" 
     });
     
   } catch (error) {
-    console.error("🧪 Admin test login error:", error);
-    res.json({ 
+    console.error("💥 Admin test login error:", error);
+    res.status(500).json({ 
       success: false, 
       message: "Server error: " + error.message 
     });

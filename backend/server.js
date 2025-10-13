@@ -1,4 +1,4 @@
-// server.js - FOR DEPLOYED BACKEND
+// server.js - Check this part
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -6,6 +6,7 @@ import 'dotenv/config';
 import connectDB from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
 
+// ✅ Make sure these imports are correct
 import userRouter from './routes/userRoute.js';
 import productRouter from "./routes/productRoute.js";
 import cartRouter from './routes/cartRoute.js';
@@ -17,7 +18,7 @@ const port = process.env.PORT || 4000;
 connectCloudinary();
 connectDB();
 
-// ✅ CORS configuration for deployed environment
+// CORS configuration
 app.use(cors({
   origin: [
     'http://localhost:5173',
@@ -27,40 +28,46 @@ app.use(cors({
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
 
-// ✅ API Routes
+// ✅ Make sure routes are mounted correctly
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 
-// ✅ Essential endpoints
+// Debug endpoint to check if routes are working
+app.get('/api/debug/routes', (req, res) => {
+  res.json({
+    message: 'Routes debug',
+    userRoutes: [
+      'POST /api/user/register',
+      'POST /api/user/login', 
+      'POST /api/user/admin',
+      'POST /api/user/admin-login',
+      'GET /api/user/profile',
+      'PUT /api/user/update-profile'
+    ],
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Health check
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     message: 'Server is running',
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
+    environment: process.env.NODE_ENV
   });
-});
-
-// ✅ Admin test endpoint
-app.get('/api/admin/test-auth', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Admin API is working!',
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get('/', (req, res) => {
-  res.send("Novamart API Working with CORS");
 });
 
 app.listen(port, () => {
   console.log(`🚀 Server started on PORT: ${port}`);
+  console.log(`📊 Available routes:`);
+  console.log(`   POST /api/user/admin`);
+  console.log(`   POST /api/user/admin-login`);
+  console.log(`   GET /health`);
 });
