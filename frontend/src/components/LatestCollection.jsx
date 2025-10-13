@@ -13,16 +13,16 @@ const LatestCollection = () => {
     },[products])
     
   return (
-    <div className='md:m-10 m-2'>
+    <div className='md:m-10 m-2 px-3'>
       <div className='text-center py-8 text-3xl'>
-        <Title text1={'LATEST'} text2={'COLLECTIONS'}/>
-        <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
-      Explore our newest arrivals, featuring fresh styles and trending products 
+        <Title  text1={'LATEST'} text2={'COLLECTIONS'}/>
+        <p className='w-3/4 m-auto  text-base text-gray-600'>
+          Explore our newest arrivals, featuring fresh styles and trending products 
           designed to keep you ahead. Handpicked with care, our latest collection 
           blends quality, comfort, and modern appeal.
         </p>
       </div>
-      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
+      <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
         {
           latestProducts.map((item,index)=>(
             <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price}/>

@@ -1,3 +1,4 @@
+// server.js (or your main server file)
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -6,33 +7,36 @@ import { fileURLToPath } from 'url';
 
 import connectDB from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
+
 import userRouter from './routes/userRoute.js';
 import productRouter from "./routes/productRoute.js";
 import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
 
-// App config
 const app = express();
 const port = process.env.PORT || 4000;
 
-connectDB();
 connectCloudinary();
+connectDB();
 
-// Middlewares
 app.use(express.json());
-app.use(cors());
+// server.js - FIX CORS
+app.use(cors({
+  origin: function (origin, callback) {
+    const allowedOrigins = [process.env.CLIENT_URL, process.env.ADMIN_URL];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
-// Fix __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Serve uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// API routes
+// ✅ Make sure these routes match what your frontend is calling
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
-app.use('/api/cart', cartRouter);
+app.use('/api/cart', cartRouter); // This should match your frontend calls to /api/cart/*
 app.use('/api/order', orderRouter);
 
 app.get('/', (req, res) => {

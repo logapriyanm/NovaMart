@@ -1,40 +1,91 @@
+// models/userModel.js - Updated schema
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    cartData: {
-      type: Object,
-      default: {},
-    },
-    address: {
-      street: { type: String, default: "" },
-      city: { type: String, default: "" },
-      state: { type: String, default: "" },
-      zipcode: { type: String, default: "" },
-      country: { type: String, default: "" },
-      phone: { type: String, default: "" },
-    },
-    profilePic: {
-      type: String,
-      default: "",
-    },
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
   },
-  { minimize: false }
-);
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  profilePic: {
+    type: String,
+    default: ""
+  },
+  cartData: {
+    type: Object,
+    default: {}
+  },
+  likedProducts: {
+    type: Array,
+    default: []
+  },
+  addresses: [{
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId()
+    },
+    firstName: {
+      type: String,
+      required: true
+    },
+    lastName: {
+      type: String,
+      required: true
+    },
+    street: {
+      type: String,
+      required: true
+    },
+    city: {
+      type: String,
+      required: true
+    },
+    district: { // Changed from state to district
+      type: String,
+      required: true
+    },
+    state: { // Changed from country to state
+      type: String,
+      required: true
+    },
+    pincode: {
+      type: String,
+      required: true
+    },
+    phone: {
+      type: String,
+      required: true
+    },
+    isDefault: {
+      type: Boolean,
+      default: false
+    }
+  }],
+  preferences: {
+    emailNotifications: { type: Boolean, default: true },
+    smsNotifications: { type: Boolean, default: false },
+    promotionalEmails: { type: Boolean, default: true },
+    darkMode: { type: Boolean, default: false },
+    currency: { type: String, default: "INR" },
+    language: { type: String, default: "en" }
+  },
+  phone: {
+    type: String,
+    default: ""
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-const userModel = mongoose.models.User || mongoose.model("User", userSchema);
-
+const userModel = mongoose.models.user || mongoose.model("user", userSchema);
 export default userModel;

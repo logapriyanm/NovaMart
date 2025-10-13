@@ -2,10 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const [mode, setMode] = useState("login"); // "login" or "signup"
   const { token, setToken, navigate, backendUrl } = useContext(ShopContext);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +18,6 @@ const Login = () => {
 
     try {
       if (mode === "signup") {
-        // Register API
         const response = await axios.post(`${backendUrl}/api/user/register`, {
           name,
           email,
@@ -29,12 +30,10 @@ const Login = () => {
           toast.success("Account created successfully!");
           navigate("/");
         } else {
-          console.log(error);
-          
+          console.log(response.data.message);
           toast.error(response.data.message);
         }
       } else {
-        // Login API
         const response = await axios.post(`${backendUrl}/api/user/login`, {
           email,
           password,
@@ -57,10 +56,15 @@ const Login = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (token) {
+    const savedToken = localStorage.getItem("token");
+    if (token || savedToken) {
       navigate("/");
     }
   }, [token, navigate]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <form
@@ -75,48 +79,73 @@ const Login = () => {
 
       {/* Show name field only in Sign Up */}
       {mode === "signup" && (
-        <input
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-          type="text"
-          className="w-full px-3 py-2 border border-gray-800"
-          placeholder="Name"
-          required
-        />
+        <div className="w-full relative">
+          <input
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+            type="text"
+            className="w-full px-3 py-2 border border-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Name"
+            required
+          />
+        </div>
       )}
 
-      <input
-        onChange={(e) => setEmail(e.target.value)}
-        value={email}
-        type="email"
-        className="w-full px-3 py-2 border border-gray-800"
-        placeholder="Email"
-        required
-      />
-      <input
-        onChange={(e) => setPassword(e.target.value)}
-        value={password}
-        type="password"
-        className="w-full px-3 py-2 border border-gray-800"
-        placeholder="Password"
-        required
-      />
+      <div className="w-full relative">
+        <input
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          type="email"
+          className="w-full px-3 py-2 border border-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Email"
+          required
+        />
+      </div>
+
+      <div className="w-full relative">
+        <input
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          type={showPassword ? "text" : "password"}
+          className="w-full px-3 py-2 pr-10 border border-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Password"
+          required
+        />
+        <button
+          type="button"
+          onClick={togglePasswordVisibility}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+        >
+          {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+        </button>
+      </div>
 
       <div className="w-full flex justify-between text-sm mt-[-8px]">
-        <p className="cursor-pointer">Forgot password</p>
+        <p className="cursor-pointer text-blue-600 hover:text-blue-800 transition-colors">
+          Forgot password?
+        </p>
         {mode === "login" ? (
-          <p onClick={() => setMode("signup")} className="cursor-pointer">
+          <p 
+            onClick={() => setMode("signup")} 
+            className="cursor-pointer text-blue-600 hover:text-blue-800 transition-colors"
+          >
             Create account
           </p>
         ) : (
-          <p onClick={() => setMode("login")} className="cursor-pointer">
+          <p 
+            onClick={() => setMode("login")} 
+            className="cursor-pointer text-blue-600 hover:text-blue-800 transition-colors"
+          >
             Login here
           </p>
         )}
       </div>
 
-      <button className="bg-black text-white font-light px-8 py-2 mt-4">
-        {mode === "login" ? "Sign In" : "Sign Up"}
+      <button 
+        type="submit"
+        className="bg-black text-white font-medium px-8 py-3 mt-4 cursor-pointer rounded hover:bg-gray-800 transition-colors w-full"
+      >
+        {mode === "login" ? "Login" : "Sign Up"}
       </button>
     </form>
   );

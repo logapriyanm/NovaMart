@@ -1,28 +1,27 @@
+// middleware/auth.js
 import jwt from "jsonwebtoken";
 
 const authUser = async (req, res, next) => {
   try {
-    const authHeader = req.headers["authorization"];
-    const token = req.headers.token || (authHeader && authHeader.split(" ")[1]);
+    // Handle token from multiple sources
+    let token = req.headers.token || 
+                req.headers.authorization?.replace("Bearer ", "") ||
+                req.headers.Authorization?.replace("Bearer ", "");
 
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Not Authorized, Login Again",
-      });
+      return res.status(401).json({ success: false, message: "Access denied. No token provided." });
     }
 
-    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    req.user = decoded; 
+    
+    // Set both req.userId and req.user for compatibility
+    req.user = { id: decoded.id, ...decoded };
+    req.userId= decoded.id;
+    
     next();
-  } catch (error) {
-    console.error("Auth Error:", error.message);
-    return res.status(401).json({
-      success: false,
-      message: "Not Authorized, Login Again", // 👈 unified message
-    });
+  } catch (err) {
+    console.log("Auth middleware error:", err.message);
+    res.status(401).json({ success: false, message: "Invalid token" });
   }
 };
 

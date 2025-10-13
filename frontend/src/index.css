@@ -37,3 +37,50 @@ a.active {
   border-bottom: 2px solid rgb(59, 58, 58);
 }
 
+/* Range slider styles */
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: #000;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider::-moz-range-thumb {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: #000;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider::-webkit-slider-track {
+  background: #e5e7eb;
+  height: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.slider::-moz-range-track {
+  background: #e5e7eb;
+  height: 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+}
+
+.sticky-in-flex {
+  align-self: flex-start;
+  position: sticky;
+  top: 6rem; /* 24 * 0.25rem = 6rem */
+}
+
+/* For mobile header */
+.sticky-header {
+  position: sticky;
+  top: 4rem; /* 16 * 0.25rem = 4rem */
+  z-index: 40;
+}
