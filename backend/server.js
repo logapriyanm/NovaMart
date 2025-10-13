@@ -22,16 +22,11 @@ connectDB();
 app.use(express.json());
 // server.js - FIX CORS
 app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [process.env.CLIENT_URL, process.env.ADMIN_URL];
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: [process.env.CLIENT_URL, process.env.ADMIN_URL, "http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
 
 // ✅ Make sure these routes match what your frontend is calling
 app.use('/api/user', userRouter);
