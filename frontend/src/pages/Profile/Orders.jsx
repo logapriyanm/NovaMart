@@ -32,11 +32,16 @@ const Orders = () => {
             const product = products.find(p => p._id === item._id);
             
             if (product) {
+              // Auto-update payment status to "Paid" if order is delivered
+              const isPaymentPaid = order.status === 'Delivered' ? true : order.payment;
+              const paymentStatus = order.status === 'Delivered' ? 'Paid' : (order.payment ? 'Paid' : 'Pending');
+              
               const orderItem = {
                 ...item,
                 image: product.image,
                 status: order.status,
-                payment: order.payment,
+                payment: isPaymentPaid, // Auto-set to true if delivered
+                paymentStatus: paymentStatus, // New field for display
                 paymentMethod: order.paymentMethod,
                 date: order.date,
                 orderId: order._id,
@@ -112,7 +117,13 @@ const Orders = () => {
                     </div>
                     <div className="text-sm text-gray-500 space-y-1">
                       <p>Ordered on: <strong>{new Date(item.date).toLocaleDateString()}</strong></p>
-                      <p>Payment: <strong>{item.paymentMethod} ({item.payment ? 'Paid' : 'Pending'})</strong></p>
+                      <p>
+                        Payment: <strong>{item.paymentMethod} 
+                        <span className={`ml-1 ${item.paymentStatus === 'Paid' ? 'text-green-600' : 'text-yellow-600'}`}>
+                          ({item.paymentStatus})
+                        </span>
+                        </strong>
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -146,6 +157,16 @@ const Orders = () => {
                   <p className="text-sm font-medium text-gray-700 mb-2">Delivery Address:</p>
                   <p className="text-sm text-gray-600">
                     {item.address.street}, {item.address.city}, {item.address.state} - {item.address.pincode}
+                  </p>
+                </div>
+              )}
+
+              {/* Auto Payment Status Notice */}
+              {item.status === 'Delivered' && (
+                <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-xs text-green-700 flex items-center">
+                    <span className="mr-1">✅</span>
+                    Order delivered. Payment status automatically updated to Paid.
                   </p>
                 </div>
               )}
