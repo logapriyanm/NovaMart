@@ -3,7 +3,8 @@ import axios from 'axios'
 import { backendUrl, currency } from "../App"
 import { toast } from 'react-toastify'
 import { assets } from '../assets/assets'
-import { FiSearch, FiFilter, FiTrendingUp, FiPackage, FiUsers, FiDollarSign } from 'react-icons/fi'
+import { FiSearch, FiFilter, FiTrendingUp, FiPackage, FiUsers,  } from 'react-icons/fi'
+import { FaIndianRupeeSign } from "react-icons/fa6";
 import { IoIosArrowDropdown } from "react-icons/io"
 import {
   BarChart,
@@ -254,7 +255,7 @@ const Orders = ({ token }) => {
               <p className="text-lg font-bold text-gray-900">{currency} {orderStats.totalRevenue.toLocaleString()}</p>
             </div>
             <div className="p-2 bg-green-100 rounded-full">
-              <FiDollarSign className="w-4 h-4 text-green-600" />
+              <FaIndianRupeeSign className="w-4 h-4 text-green-600" />
             </div>
           </div>
         </div>
