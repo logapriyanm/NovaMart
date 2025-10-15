@@ -161,15 +161,7 @@ const Orders = () => {
                 </div>
               )}
 
-              {/* Auto Payment Status Notice */}
-              {item.status === 'Delivered' && (
-                <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-xs text-green-700 flex items-center">
-                    <span className="mr-1">✅</span>
-                    Order delivered. Payment status automatically updated to Paid.
-                  </p>
-                </div>
-              )}
+              
             </div>
           ))}
         </div>
