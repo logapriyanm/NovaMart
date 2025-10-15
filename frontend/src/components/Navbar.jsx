@@ -69,7 +69,9 @@ const Navbar = () => {
       <div className="flex items-center px-4 sm:px-6 md:px-8 lg:px-10 justify-between py-3 font-medium">
         {/* Logo */}
         <Link to={"/"}>
-          <p className="text-lg sm:text-xl font-bold text-gray-900">NovaMart</p>
+         <p className="font-bold text-transparent bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-lg">
+                Novamart
+              </p>
         </Link>
 
         {/* Middle Nav Links (Desktop only) */}
