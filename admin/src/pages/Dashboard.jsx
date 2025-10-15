@@ -38,7 +38,7 @@ const Dashboard = ({ token }) => {
 
 const fetchDashboardData = async () => {
   if (!token) {
-    console.error("❌ No token available in Dashboard");
+    console.log(error.message);
     toast.error("No authentication token found");
     return;
   }
@@ -46,27 +46,19 @@ const fetchDashboardData = async () => {
   try {
     setLoading(true);
     
-    console.log("🔍 ===== DASHBOARD DEBUG START =====");
-    console.log("🔑 Token available:", token ? "YES" : "NO");
-    console.log("🌐 Backend URL:", backendUrl);
-
-    // Skip health check since endpoint is missing
-    console.log("⚠️ Skipping health check - endpoint not available");
-
-    // Step 1: Test products endpoint (this works)
-    console.log("📦 Step 1: Testing products endpoint...");
+   
     let productsResponse;
     try {
       productsResponse = await axios.get(`${backendUrl}/api/product/list`);
-      console.log("✅ Products endpoint SUCCESS");
+     
     } catch (productsError) {
-      console.error("❌ Products endpoint FAILED:", productsError.message);
+      console.log(error);
+      
       toast.error("Failed to load products");
       return;
     }
 
-    // Step 2: Test admin orders endpoint
-    console.log("📋 Step 2: Testing admin orders endpoint...");
+   
     let ordersResponse;
     try {
       ordersResponse = await axios.get(`${backendUrl}/api/order/admin/all`, {
@@ -74,13 +66,9 @@ const fetchDashboardData = async () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      console.log("✅ Admin orders endpoint SUCCESS:", ordersResponse.data);
+      
     } catch (ordersError) {
-      console.error("❌ Admin orders endpoint FAILED:", {
-        status: ordersError.response?.status,
-        data: ordersError.response?.data,
-        message: ordersError.message
-      });
+      
       
       if (ordersError.response?.status === 403) {
         toast.error("Access denied. Not an admin user.");
@@ -92,17 +80,12 @@ const fetchDashboardData = async () => {
       return;
     }
 
-    // Step 3: Process data
-    console.log("📊 Step 3: Processing dashboard data...");
+    
     if (productsResponse.data.success && ordersResponse.data.success) {
       const products = productsResponse.data.products || [];
       const orders = ordersResponse.data.orders || [];
 
-      console.log("📈 Data received:", {
-        productsCount: products.length,
-        ordersCount: orders.length
-      });
-
+     
       // Your data processing code...
       const totalRevenue = orders.reduce((sum, order) => {
         const orderTotal = order.items?.reduce((orderSum, item) => 
@@ -160,10 +143,11 @@ const fetchDashboardData = async () => {
       const categorySales = generateCategoryData(products, orders);
       setCategoryData(categorySales);
 
-      console.log("🎉 Dashboard data loaded successfully!");
+     
     }
   } catch (error) {
-    console.error("💥 Dashboard unexpected error:", error.message);
+    console.log(error.message);
+    
     toast.error("Unexpected error: " + error.message);
   } finally {
     setLoading(false);

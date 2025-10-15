@@ -1,4 +1,4 @@
-// server.js - Check this part
+
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -6,7 +6,7 @@ import 'dotenv/config';
 import connectDB from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
 
-// ✅ Make sure these imports are correct
+
 import userRouter from './routes/userRoute.js';
 import productRouter from "./routes/productRoute.js";
 import cartRouter from './routes/cartRoute.js';
@@ -18,7 +18,7 @@ const port = process.env.PORT || 4000;
 connectCloudinary();
 connectDB();
 
-// CORS configuration
+
 app.use(cors({
   origin: [
     'http://localhost:5173',
@@ -33,13 +33,13 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ Make sure routes are mounted correctly
+
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 
-// Debug endpoint to check if routes are working
+
 app.get('/api/debug/routes', (req, res) => {
   res.json({
     message: 'Routes debug',
@@ -55,7 +55,7 @@ app.get('/api/debug/routes', (req, res) => {
   });
 });
 
-// Health check
+
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -65,9 +65,6 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Server started on PORT: ${port}`);
-  console.log(`📊 Available routes:`);
-  console.log(`   POST /api/user/admin`);
-  console.log(`   POST /api/user/admin-login`);
-  console.log(`   GET /health`);
+  console.log(` Server started on PORT: ${port}`);
+ 
 });

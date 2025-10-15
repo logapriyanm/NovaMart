@@ -1,14 +1,14 @@
-// controllers/cartController.js
+
 import userModel from "../models/userModel.js";
 
 
-// In cartController.js
+
 const addToCart = async (req, res) => {
   try {
     const { itemId, size } = req.body;
-    const userId = req.user.id; // ✅ Now using req.user
+    const userId = req.user.id;
 
-    console.log("Add to cart request:", { userId, itemId, size });
+    
 
     const userData = await userModel.findById(userId);
     if (!userData) {
@@ -30,7 +30,7 @@ const addToCart = async (req, res) => {
 
     await userModel.findByIdAndUpdate(userId, { cartData });
     
-    console.log("Cart updated successfully");
+    
     res.json({ success: true, message: "Added To Cart" });
     
   } catch (error) {
@@ -39,11 +39,11 @@ const addToCart = async (req, res) => {
   }
 };
 
-// FIX THIS FUNCTION - remove userId from body
+
 const updateCart = async (req, res) => {
   try {
-    const { itemId, size, quantity } = req.body; // Remove userId
-    const userId = req.user.id; // Use from auth middleware
+    const { itemId, size, quantity } = req.body;
+    const userId = req.user.id; 
 
     const userData = await userModel.findById(userId);
     if (!userData) {
@@ -90,11 +90,11 @@ const getUserCart = async (req, res) => {
   }
 };
 
-// FIXED: removeFromCart function
+
 const removeFromCart = async (req, res) => {
   try {
     const { itemId, size } = req.body;
-    const userId = req.user.id; // ✅ Use from auth middleware
+    const userId = req.user.id; 
 
     const userData = await userModel.findById(userId);
     if (!userData) {

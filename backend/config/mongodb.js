@@ -7,10 +7,10 @@ const connectDB = async () => {
     });
 
     mongoose.connection.on("connected", () => {
-      console.log("✅ MongoDB Connected");
+      console.log(" MongoDB Connected");
     });
   } catch (err) {
-    console.error("❌ MongoDB connection failed:", err.message);
+    console.error(" MongoDB connection failed:", err.message);
     process.exit(1);
   }
 };

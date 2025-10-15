@@ -32,7 +32,7 @@ const Orders = () => {
             const product = products.find(p => p._id === item._id);
             
             if (product) {
-              // Auto-update payment status to "Paid" if order is delivered
+             
               const isPaymentPaid = order.status === 'Delivered' ? true : order.payment;
               const paymentStatus = order.status === 'Delivered' ? 'Paid' : (order.payment ? 'Paid' : 'Pending');
               
@@ -40,8 +40,8 @@ const Orders = () => {
                 ...item,
                 image: product.image,
                 status: order.status,
-                payment: isPaymentPaid, // Auto-set to true if delivered
-                paymentStatus: paymentStatus, // New field for display
+                payment: isPaymentPaid, 
+                paymentStatus: paymentStatus,
                 paymentMethod: order.paymentMethod,
                 date: order.date,
                 orderId: order._id,

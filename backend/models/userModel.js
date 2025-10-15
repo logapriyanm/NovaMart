@@ -1,4 +1,4 @@
-// models/userModel.js - Updated schema
+
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -48,11 +48,11 @@ const userSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    district: { // Changed from state to district
+    district: { 
       type: String,
       required: true
     },
-    state: { // Changed from country to state
+    state: { 
       type: String,
       required: true
     },

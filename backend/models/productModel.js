@@ -1,4 +1,4 @@
-// models/productModel.js - Add stock validation
+
 import mongoose from "mongoose";
 
 const productsSchema = new mongoose.Schema({
@@ -53,10 +53,10 @@ const productsSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// ✅ Add a pre-save middleware to clean up sizes
+
 productsSchema.pre('save', function(next) {
   if (this.sizes && Array.isArray(this.sizes)) {
-    // Remove any sizes that are missing the required fields
+    
     this.sizes = this.sizes.filter(sizeObj => 
       sizeObj && sizeObj.size && sizeObj.size.trim() !== ""
     );
@@ -64,12 +64,12 @@ productsSchema.pre('save', function(next) {
   next();
 });
 
-// ✅ Add virtual for total stock
+
 productsSchema.virtual('totalStock').get(function() {
   return this.sizes.reduce((total, size) => total + (size.quantity || 0), 0);
 });
 
-// ✅ Add method to decrease stock
+
 productsSchema.methods.decreaseStock = function(size, quantity) {
   const sizeObj = this.sizes.find(s => s.size === size);
   if (sizeObj && sizeObj.quantity >= quantity) {

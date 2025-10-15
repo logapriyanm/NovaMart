@@ -1,4 +1,4 @@
-// context/ShopContext.jsx
+
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -16,25 +16,25 @@ const ShopContextProvider = ({ children }) => {
   const [likedProducts, setLikedProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState("");
-  const [user, setUser] = useState(null); // Add user state
+  const [user, setUser] = useState(null); 
   const navigate = useNavigate();
 
-  // Filter states - shared across components
+  
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState('relevant');
   const [priceRange, setPriceRange] = useState([0, 500000]);
 
-  // Calculate max price from products for dynamic range
+  
   const maxPrice = Math.max(...products.map(item => item.price), 1000);
 
-  // Helper function to check if category should use sizes
+  
   const shouldUseSizes = (category) => {
     const fashionCategories = ['Fashion', 'Clothing', 'Apparel'];
     return fashionCategories.includes(category);
   };
 
-  // Filter functions
+  
   const toggleCategory = (cat) => {
     if (category.includes(cat)) {
       setCategory(prev => prev.filter(item => item !== cat));
@@ -75,7 +75,7 @@ const ShopContextProvider = ({ children }) => {
     return count;
   };
 
-  // ---------------- USER PROFILE FUNCTIONS ----------------
+  
   const getUserProfile = async (token) => {
     try {
       const response = await axios.get(
@@ -102,7 +102,7 @@ const ShopContextProvider = ({ children }) => {
         return { success: false, message: 'Not authenticated' };
       }
 
-      // Check if formData is FormData (file upload) or regular object
+      
       const isFormData = formData instanceof FormData;
       
       const response = await fetch(`${backendUrl}/api/user/update-profile`, {
@@ -142,7 +142,7 @@ const ShopContextProvider = ({ children }) => {
     }
 
     try {
-      console.log("Toggling wishlist for product:", productId);
+      
 
       const response = await axios.post(
         `${backendUrl}/api/user/wishlist/toggle`,
@@ -155,7 +155,7 @@ const ShopContextProvider = ({ children }) => {
         }
       );
 
-      console.log("Wishlist response:", response.data);
+      
 
       if (response.data.success) {
         setLikedProducts(response.data.likedProducts);
@@ -192,7 +192,7 @@ const ShopContextProvider = ({ children }) => {
         return;
       }
 
-      // Determine the actual size to use based on product category
+      
       let actualSize = size;
       if (!shouldUseSizes(product.category)) {
         // For non-fashion products, use "One Size"
@@ -214,7 +214,7 @@ const ShopContextProvider = ({ children }) => {
         return;
       }
 
-      // Check if adding this quantity would exceed stock
+      
       const currentInCart = cartItems[itemId]?.[actualSize] || 0;
       const totalAfterAdd = currentInCart + quantity;
 
@@ -236,7 +236,7 @@ const ShopContextProvider = ({ children }) => {
       );
 
       if (cartResponse.data.success) {
-        // Update local state
+        
         const cartData = structuredClone(cartItems);
         if (cartData[itemId]) {
           cartData[itemId][actualSize] = (cartData[itemId][actualSize] || 0) + quantity;
@@ -342,7 +342,7 @@ const ShopContextProvider = ({ children }) => {
       setToken(savedToken);
       getUserCart(savedToken);
       getUserWishlist(savedToken);
-      getUserProfile(savedToken); // Fetch user profile
+      getUserProfile(savedToken); 
     }
   }, []);
 
@@ -350,7 +350,7 @@ const ShopContextProvider = ({ children }) => {
     if (token) {
       getUserCart(token);
       getUserWishlist(token);
-      getUserProfile(token); // Fetch user profile when token changes
+      getUserProfile(token); 
     }
   }, [token]);
 
@@ -366,7 +366,7 @@ const ShopContextProvider = ({ children }) => {
   };
 
   const value = {
-    // Products and basic states
+    
     products,
     currency,
     delivery_fee,
@@ -404,10 +404,10 @@ const ShopContextProvider = ({ children }) => {
       return totalAmount;
     },
     
-    // Navigation and auth
+    
     navigate,
     
-    // Wishlist functionality
+    // Wishlist 
     likedProducts,
     toggleLike,
     isLiked,

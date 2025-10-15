@@ -22,7 +22,7 @@ export const AdminContextProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       localStorage.setItem('adminToken', token);
-      // Verify token and get admin info
+      
     } else {
       localStorage.removeItem('adminToken');
     }

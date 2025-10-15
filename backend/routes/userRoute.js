@@ -1,4 +1,4 @@
-// routes/userRoute.js - FIXED VERSION
+
 import express from "express";
 import {
   registerUser,
@@ -28,7 +28,7 @@ const userRouter = express.Router();
 // Public routes
 userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
-userRouter.post("/admin-login", adminLogin); // Keep both for compatibility
+userRouter.post("/admin-login", adminLogin); 
 
 // Protected routes
 userRouter.get("/profile", authUser, getProfile);
@@ -50,16 +50,12 @@ userRouter.post('/change-password', authUser, changePassword);
 userRouter.put('/preferences', authUser, updatePreferences);
 userRouter.delete('/account', authUser, deleteAccount);
 
-// Test endpoint for debugging admin login
+
 userRouter.post('/admin-test', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    console.log("🔍 ADMIN TEST LOGIN REQUEST:", { 
-      email, 
-      expectedEmail: process.env.ADMIN_EMAIL,
-      envLoaded: !!process.env.ADMIN_EMAIL 
-    });
+    
 
     // Check environment variables
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
@@ -73,7 +69,7 @@ userRouter.post('/admin-test', async (req, res) => {
       let adminUser = await userModel.findOne({ email: process.env.ADMIN_EMAIL });
       
       if (!adminUser) {
-        console.log("📝 Creating new admin user in database...");
+        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, salt);
         
@@ -84,7 +80,7 @@ userRouter.post('/admin-test', async (req, res) => {
           role: "admin"
         });
         await adminUser.save();
-        console.log("✅ Admin user created successfully");
+       
       }
 
       const token = jwt.sign({ 
@@ -93,7 +89,7 @@ userRouter.post('/admin-test', async (req, res) => {
         email: adminUser.email 
       }, process.env.JWT_SECRET, { expiresIn: "7d" });
       
-      console.log("✅ Admin login successful");
+      
       
       return res.json({ 
         success: true, 
@@ -107,14 +103,14 @@ userRouter.post('/admin-test', async (req, res) => {
       });
     }
 
-    console.log("❌ Invalid admin credentials");
+    
     return res.status(401).json({ 
       success: false, 
       message: "Invalid admin credentials" 
     });
     
   } catch (error) {
-    console.error("💥 Admin test login error:", error);
+    console.error(" Admin test login error:", error);
     res.status(500).json({ 
       success: false, 
       message: "Server error: " + error.message 

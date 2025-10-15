@@ -187,7 +187,7 @@ const Settings = () => {
     }
   };
 
-  // Handle tab change for mobile
+  
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
     setMobileMenuOpen(false);
@@ -199,7 +199,7 @@ const Settings = () => {
     }
   }, [token]);
 
-  // Updated tabs without Profile
+  
   const tabs = [
     { id: "security", name: "Security", icon: <FaLock className="w-4 h-4" /> },
     { id: "notifications", name: "Notifications", icon: <FaBell className="w-4 h-4" /> },
@@ -344,7 +344,7 @@ const Settings = () => {
                     </button>
                   </div>
 
-                  <div className="flex justify-between pt-4">
+                  <div className=" flex flex-col md:flex md:flex-row gap-5 justify-between pt-4">
                     <button
                       type="submit"
                       disabled={loading}
@@ -356,7 +356,7 @@ const Settings = () => {
                     <button
                       onClick={handleDeleteAccount}
                       disabled={loading}
-                      className="bg-red-600 cursor-pointer text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                      className="bg-red-600 cursor-pointer text-white px-6 py-0.5 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                       <FaTrash className="w-4 h-4" />
                       Delete Account

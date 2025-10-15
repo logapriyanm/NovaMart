@@ -36,7 +36,7 @@ const Footer = () => {
             {/* Main Footer Content */}
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col lg:flex-row justify-between gap-10 mb-8">
-                    {/* Brand Section */}
+                   
                     <div className="flex-1 max-w-md">
                         <h3 className="text-2xl font-bold text-white mb-4">NovaMart</h3>
                         <p className="text-gray-300 leading-relaxed mb-4">

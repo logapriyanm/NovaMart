@@ -25,11 +25,11 @@ const Profile = () => {
 
   const handleSectionChange = (section) => {
     setActiveSection(section);
-    setShowMobileSidebar(false); // Close sidebar when section changes
+    setShowMobileSidebar(false); 
   };
 
   const handleMobileItemClick = () => {
-    setShowMobileSidebar(false); // Close sidebar when item is clicked
+    setShowMobileSidebar(false); 
   };
 
   return (

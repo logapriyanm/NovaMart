@@ -20,7 +20,7 @@ const Add = ({ token }) => {
   const [sizes, setSizes] = useState([]);
   const [stockQuantity, setStockQuantity] = useState(0);
 
-  // Define subcategories for each category
+  
   const subCategoriesMap = {
     Fashion: ["Men", "Women", "Kids"],
     Electronics: ["Mobile", "Laptops", "Accessories", "Others"],
@@ -32,33 +32,33 @@ const Add = ({ token }) => {
     Others: ["Others"]
   };
 
-  // Check if category should use sizes or simple stock
+ 
   const shouldUseSizes = (cat) => {
     const sizeCategories = ['Fashion', 'Clothing', 'Apparel'];
     return sizeCategories.includes(cat);
   };
 
   useEffect(() => {
-    // Reset subCategory to first option when category changes
+    
     setSubCategory(subCategoriesMap[category][0]);
     
-    // Reset stock when category changes
+    
     if (!shouldUseSizes(category)) {
       setSizes([{ size: "One Size", quantity: stockQuantity }]);
     }
   }, [category]);
 
-  // Initialize sizes based on category
+  
   useEffect(() => {
     if (shouldUseSizes(category)) {
-      // For fashion: initialize with all sizes
+      
       const initialSizes = ["S", "M", "L", "XL", "XXL"].map(size => ({
         size,
         quantity: 0
       }));
       setSizes(initialSizes);
     } else {
-      // For non-fashion: initialize with "One Size"
+      
       setSizes([{ size: "One Size", quantity: stockQuantity }]);
     }
   }, []);
@@ -74,11 +74,11 @@ const Add = ({ token }) => {
       formData.append("subCategory", subCategory);
       formData.append("bestseller", bestseller);
       
-      // Prepare sizes data based on category type
+      
       let sizesToSend = [];
       
       if (shouldUseSizes(category)) {
-        // For fashion: send all sizes with quantities
+      
         sizesToSend = sizes
           .filter(item => item.quantity > 0)
           .map(item => ({
@@ -86,7 +86,7 @@ const Add = ({ token }) => {
             quantity: item.quantity
           }));
       } else {
-        // For non-fashion: send "One Size" with total quantity
+       
         sizesToSend = [{
           size: "One Size",
           quantity: stockQuantity
@@ -95,7 +95,7 @@ const Add = ({ token }) => {
     
       formData.append("sizes", JSON.stringify(sizesToSend));
       
-      // Append images only if they exist
+      
       if (image1) formData.append("image1", image1);
       if (image2) formData.append("image2", image2);
       if (image3) formData.append("image3", image3);
@@ -270,7 +270,7 @@ const Add = ({ token }) => {
           </div>
         </div>
 
-        {/* Stock Management - UPDATED: Show appropriate input based on category */}
+       
         {shouldUseSizes(category) ? (
           /* Sizes for Fashion Products */
           <div className="w-full">

@@ -25,8 +25,8 @@ const PlaceOrder = () => {
     email: "",
     street: "",
     city: "",
-    district: "", // Changed from state
-    state: "", // Changed from country
+    district: "", 
+    state: "", 
     pincode: "",
     phone: "",
   });
@@ -49,7 +49,7 @@ const PlaceOrder = () => {
           // Set saved addresses
           setSavedAddresses(user.addresses || []);
           
-          // If user has default address, prefill form
+          
           if (user.defaultAddress) {
             setFormData({
               firstName: user.defaultAddress.firstName || "",
@@ -57,8 +57,8 @@ const PlaceOrder = () => {
               email: user.email || "",
               street: user.defaultAddress.street || "",
               city: user.defaultAddress.city || "",
-              district: user.defaultAddress.district || "", // Changed from state
-              state: user.defaultAddress.state || "", // Changed from country
+              district: user.defaultAddress.district || "",
+              state: user.defaultAddress.state || "", 
               pincode: user.defaultAddress.pincode || "",
               phone: user.defaultAddress.phone || "",
             });
@@ -72,14 +72,14 @@ const PlaceOrder = () => {
               email: user.email || "",
               street: firstAddress.street || "",
               city: firstAddress.city || "",
-              district: firstAddress.district || "", // Changed from state
-              state: firstAddress.state || "", // Changed from country
+              district: firstAddress.district || "", 
+              state: firstAddress.state || "", 
               pincode: firstAddress.pincode || "",
               phone: firstAddress.phone || "",
             });
             setSelectedAddress(firstAddress._id);
           } else {
-            // Prefill with user email only
+            
             setFormData(prev => ({ ...prev, email: user.email || "" }));
           }
         }
@@ -97,11 +97,11 @@ const PlaceOrder = () => {
       setFormData({
         firstName: address.firstName,
         lastName: address.lastName,
-        email: formData.email, // Keep current email
+        email: formData.email, 
         street: address.street,
         city: address.city,
-        district: address.district, // Changed from state
-        state: address.state, // Changed from country
+        district: address.district, 
+        state: address.state, 
         pincode: address.pincode,
         phone: address.phone,
       });
@@ -112,7 +112,7 @@ const PlaceOrder = () => {
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
     setFormData(data => ({ ...data, [name]: value }));
-    // Clear selected address when user manually edits
+    
     if (selectedAddress) {
       setSelectedAddress("");
     }

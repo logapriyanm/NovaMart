@@ -8,7 +8,7 @@ const Collection = () => {
   const { 
     products, 
     search, 
-    // Filter states and functions from context
+  
     category,
     subCategory,
     sortType,
@@ -25,13 +25,13 @@ const Collection = () => {
   const [filterProducts, setFilterProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Dropdown states - Only for desktop
+  
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [subCategoryOpen, setSubCategoryOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [priceOpen, setPriceOpen] = useState(false);
 
-  // Optimized filter function
+ 
   const applyFilter = useCallback(() => {
     let productsCopy = [...products];
 
@@ -78,7 +78,7 @@ const Collection = () => {
     }
   };
 
-  // Get display text for sort dropdown
+
   const getSortDisplayText = () => {
     switch (sortType) {
       case 'low-high': return 'Low to High';
@@ -87,7 +87,7 @@ const Collection = () => {
     }
   };
 
-  // Get display text for price range
+
   const getPriceDisplayText = () => {
     if (priceRange[0] === 0 && priceRange[1] === maxPrice) {
       return 'All Prices';

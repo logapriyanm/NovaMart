@@ -1,4 +1,4 @@
-// components/Cart.jsx - Fixed version with proper stock validation
+
 import { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
@@ -36,7 +36,7 @@ const Cart = () => {
     }
   }, [cartItems, products]);
 
-  // Get available stock for a product size
+ 
   const getAvailableStock = (productId, size) => {
     const product = products.find(p => p._id === productId);
     if (!product || !product.sizes) return 0;

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 const adminAuth = async (req, res, next) => {
   try {
-    console.log("🛡️ Admin Auth Middleware - Checking token");
+   
     
     const authHeader = req.headers.authorization || req.headers.Authorization;
     

@@ -1,4 +1,4 @@
-// routes/orderRoute.js - FOR DEPLOYED BACKEND
+
 import express from "express"
 import { 
   placeOrder, 

@@ -77,7 +77,7 @@ const Login = () => {
         </p>
       </div>
 
-      {/* Show name field only in Sign Up */}
+      
       {mode === "signup" && (
         <div className="w-full relative">
           <input

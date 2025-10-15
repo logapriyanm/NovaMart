@@ -55,7 +55,7 @@ const Navbar = () => {
     }
   }, [location]);
 
-  // Get display text for price range
+  
   const getPriceDisplayText = () => {
     if (priceRange[0] === 0 && priceRange[1] === maxPrice) {
       return 'All Prices';
@@ -97,7 +97,7 @@ const Navbar = () => {
             </button>
           )}
 
-          {/* Profile with Profile Picture */}
+          
           <button 
             onClick={() => token ? navigate("/profile") : navigate("/login")} 
             className="text-gray-600 cursor-pointer hover:text-black transition-colors"

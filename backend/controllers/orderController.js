@@ -7,22 +7,19 @@ const currency = "inr";
 const deliveryCharge = 10;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// ---------------------
-// Stock Management Functions
-// ---------------------
+
 const decreaseProductStock = async (orderItems) => {
   try {
-    console.log("📦 Decreasing stock for order items:", orderItems);
+    
     
     for (const item of orderItems) {
       const product = await productModel.findById(item._id || item.productId);
       
       if (!product) {
-        console.error(`❌ Product not found: ${item._id || item.productId}`);
+        console.error(` Product not found: ${item._id || item.productId}`);
         continue;
       }
 
-      // Determine the size to use
       const itemSize = item.size || "One Size";
       
       // Find the size and decrease quantity
@@ -33,38 +30,38 @@ const decreaseProductStock = async (orderItems) => {
         const orderedQuantity = item.quantity || 1;
         
         if (currentQuantity < orderedQuantity) {
-          console.error(`❌ Insufficient stock for ${product.name} (${itemSize}): ${currentQuantity} available, ${orderedQuantity} ordered`);
+          console.error(` Insufficient stock for ${product.name} (${itemSize}): ${currentQuantity} available, ${orderedQuantity} ordered`);
           throw new Error(`Insufficient stock for ${product.name} (${itemSize})`);
         }
         
         const newQuantity = Math.max(0, currentQuantity - orderedQuantity);
         product.sizes[sizeIndex].quantity = newQuantity;
         
-        console.log(`✅ Decreased stock for ${product.name} (${itemSize}): ${currentQuantity} -> ${newQuantity}`);
+        
         
         await product.save();
       } else {
-        console.error(`❌ Size ${itemSize} not found for product ${product.name}`);
+        
         throw new Error(`Size ${itemSize} not available for ${product.name}`);
       }
     }
     
-    console.log("✅ Stock decrease completed successfully");
+   
   } catch (error) {
-    console.error('❌ Error decreasing product stock:', error);
+    console.error(' Error decreasing product stock:', error);
     throw error;
   }
 };
 
 const increaseProductStock = async (orderItems) => {
   try {
-    console.log("📦 Increasing stock for order items:", orderItems);
+   
     
     for (const item of orderItems) {
       const product = await productModel.findById(item._id || item.productId);
       
       if (!product) {
-        console.error(`❌ Product not found: ${item._id || item.productId}`);
+        console.error(` Product not found: ${item._id || item.productId}`);
         continue;
       }
 
@@ -81,27 +78,25 @@ const increaseProductStock = async (orderItems) => {
         
         product.sizes[sizeIndex].quantity = newQuantity;
         
-        console.log(`✅ Increased stock for ${product.name} (${itemSize}): ${currentQuantity} -> ${newQuantity}`);
+        
         
         await product.save();
       } else {
-        console.error(`❌ Size ${itemSize} not found for product ${product.name}`);
+        console.error(` Size ${itemSize} not found for product ${product.name}`);
       }
     }
     
-    console.log("✅ Stock increase completed successfully");
+    
   } catch (error) {
-    console.error('❌ Error increasing product stock:', error);
+    console.error(' Error increasing product stock:', error);
     throw error;
   }
 };
 
-// ---------------------
-// Cash On Delivery
-// ---------------------
+
 const placeOrder = async (req, res) => {
   try {
-    console.log("🔍 DEBUG - Starting placeOrder...");
+   
     
     const userId = req.user.id;
     if (!userId) {
@@ -110,7 +105,7 @@ const placeOrder = async (req, res) => {
 
     const { items, amount, address } = req.body;
 
-    // ✅ IMPORTANT: Fetch complete product data to get images
+    
     const enhancedItems = await Promise.all(
       items.map(async (item) => {
         try {
@@ -125,26 +120,25 @@ const placeOrder = async (req, res) => {
           if (product) {
             return {
               ...item,
-              image: product.image, // Add image data from product
+              image: product.image, 
               images: product.images
             };
           }
-          return item; // Return original item if product not found
+          return item; 
         } catch (error) {
-          console.error(`❌ Error fetching product ${item._id}:`, error);
-          return item; // Return original item if error
+          console.error(` Error fetching product ${item._id}:`, error);
+          return item; 
         }
       })
     );
 
-    console.log("🖼️ Enhanced items with images:", enhancedItems);
-
-    // ✅ DECREASE STOCK BEFORE CREATING ORDER
+  
+    
     await decreaseProductStock(enhancedItems);
 
     const orderData = {
       userId,
-      items: enhancedItems, // Use enhanced items with images
+      items: enhancedItems, 
       address,
       amount,
       paymentMethod: "COD",
@@ -153,7 +147,7 @@ const placeOrder = async (req, res) => {
       status: "Order Placed",
     };
 
-    console.log("💾 Creating order with data:", orderData);
+    
 
     const newOrder = new orderModel(orderData);
     await newOrder.save();
@@ -167,7 +161,7 @@ const placeOrder = async (req, res) => {
       orderId: newOrder._id 
     });
   } catch (error) {
-    console.error("❌ placeOrder error:", error);
+    console.error(" placeOrder error:", error);
     
     // If stock decrease failed, return specific error
     if (error.message.includes('Insufficient stock') || error.message.includes('Size not available')) {
@@ -184,15 +178,12 @@ const placeOrder = async (req, res) => {
   }
 };
 
-// ---------------------
+
 // Stripe Payment
-// ---------------------
+
 const placeOrderStripe = async (req, res) => {
   try {
-    console.log("🔍 DEBUG - Starting placeOrderStripe...");
-    console.log("User from auth:", req.user);
-
-    // ✅ Get userId from authenticated user
+    
     const userId = req.user.id;
     if (!userId) {
       return res.status(401).json({ success: false, message: "User not authenticated" });
@@ -205,7 +196,7 @@ const placeOrderStripe = async (req, res) => {
 
     const origin = req.headers.origin || process.env.CLIENT_URL;
 
-    // ✅ IMPORTANT: Fetch complete product data to get images
+    
     const enhancedItems = await Promise.all(
       items.map(async (item) => {
         try {
@@ -214,32 +205,32 @@ const placeOrderStripe = async (req, res) => {
             return item;
           }
           
-          // Otherwise, fetch the product from database to get images
+        
           const product = await productModel.findById(item._id);
           
           if (product) {
             return {
               ...item,
-              image: product.image, // Add image data from product
+              image: product.image, 
               images: product.images
             };
           }
-          return item; // Return original item if product not found
+          return item; 
         } catch (error) {
-          console.error(`❌ Error fetching product ${item._id}:`, error);
-          return item; // Return original item if error
+          console.error(` Error fetching product ${item._id}:`, error);
+          return item; 
         }
       })
     );
 
-    console.log("🖼️ Enhanced items with images:", enhancedItems);
+    
 
-    // ✅ DECREASE STOCK BEFORE CREATING ORDER
+    
     await decreaseProductStock(enhancedItems);
 
     const orderData = {
       userId,
-      items: enhancedItems, // ✅ Use enhanced items with images
+      items: enhancedItems, 
       address,
       amount,
       paymentMethod: "Stripe",
@@ -248,8 +239,7 @@ const placeOrderStripe = async (req, res) => {
       status: "Order Placed",
     };
 
-    console.log("💾 Creating Stripe order with data:", orderData);
-
+    
     const newOrder = new orderModel(orderData);
     await newOrder.save();
 
@@ -257,8 +247,8 @@ const placeOrderStripe = async (req, res) => {
       price_data: {
         currency,
         product_data: { 
-          name: `${item.name} (Size: ${item.size || "One Size"})`, // ✅ Include size in product name
-          images: item.image ? [item.image[0]] : [] // ✅ Add product images to Stripe
+          name: `${item.name} (Size: ${item.size || "One Size"})`, 
+          images: item.image ? [item.image[0]] : [] 
         },
         unit_amount: Math.round(item.price * 100),
       },
@@ -287,7 +277,7 @@ const placeOrderStripe = async (req, res) => {
       }
     });
 
-    console.log("✅ Stripe session created:", session.id);
+    
 
     res.json({ 
       success: true, 
@@ -295,7 +285,7 @@ const placeOrderStripe = async (req, res) => {
       order: newOrder 
     });
   } catch (error) {
-    console.error("❌ placeOrderStripe error:", error);
+    console.error(" placeOrderStripe error:", error);
     
     // If stock decrease failed, return specific error
     if (error.message.includes('Insufficient stock') || error.message.includes('Size not available')) {
@@ -312,15 +302,12 @@ const placeOrderStripe = async (req, res) => {
   }
 };
 
-// ---------------------
+
 // Verify Stripe Payment
-// ---------------------
+
 const verifyStripe = async (req, res) => {
   try {
-    console.log("🔍 DEBUG - Starting verifyStripe...");
-    console.log("User from auth:", req.user);
-
-    // ✅ Get userId from authenticated user
+    
     const userId = req.user.id;
     if (!userId) {
       return res.status(401).json({ success: false, message: "User not authenticated" });
@@ -336,7 +323,7 @@ const verifyStripe = async (req, res) => {
       return res.status(404).json({ success: false, message: "Order not found" });
     }
 
-    // ✅ Compare with userId from authenticated user
+    
     if (order.userId.toString() !== userId.toString()) {
       return res.status(403).json({ success: false, message: "Unauthorized" });
     }
@@ -346,21 +333,20 @@ const verifyStripe = async (req, res) => {
       order.status = "Payment Confirmed";
       await order.save();
 
-      // Clear user's cart after successful payment
+      
       await userModel.findByIdAndUpdate(userId, { cartData: {} });
       
-      console.log("✅ Stripe payment verified successfully");
       
       res.json({ 
         success: true, 
         message: "Payment successful" 
       });
     } else {
-      // ✅ INCREASE STOCK BACK IF PAYMENT FAILED
+      
       await increaseProductStock(order.items);
       
       await orderModel.findByIdAndDelete(orderId);
-      console.log("❌ Stripe payment failed, order removed and stock restored");
+      console.log(" Stripe payment failed, order removed and stock restored");
       
       res.json({ 
         success: false, 
@@ -368,7 +354,7 @@ const verifyStripe = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("❌ verifyStripe error:", error);
+    console.error(" verifyStripe error:", error);
     res.status(500).json({ 
       success: false, 
       message: error.message 
@@ -376,13 +362,13 @@ const verifyStripe = async (req, res) => {
   }
 };
 
-// ---------------------
+
 // Admin: Get All Orders
-// ---------------------
+
 const allOrders = async (req, res) => {
   try {
     const orders = await orderModel.find({})
-      .populate('userId', 'name email') // Populate user info
+      .populate('userId', 'name email') 
       .sort({ date: -1 });
     
     res.json({ success: true, orders });
@@ -392,18 +378,18 @@ const allOrders = async (req, res) => {
   }
 };
 
-// ---------------------
+
 // User: Get Orders
-// ---------------------
+
 const userOrders = async (req, res) => {
   try {
-    // ✅ Get userId from authenticated user
+    
     const userId = req.user.id;
     if (!userId) {
       return res.status(401).json({ success: false, message: "User not authenticated" });
     }
 
-    console.log("📦 Fetching orders for user:", userId);
+    
 
     const orders = await orderModel.find({ userId }).sort({ date: -1 });
     
@@ -412,7 +398,7 @@ const userOrders = async (req, res) => {
       orders 
     });
   } catch (error) {
-    console.error("❌ userOrders error:", error);
+    console.error(" userOrders error:", error);
     res.status(500).json({ 
       success: false, 
       message: error.message 
@@ -420,15 +406,12 @@ const userOrders = async (req, res) => {
   }
 };
 
-// ---------------------
+
 // Admin: Update Order Status
-// ---------------------
+
 const updateStatus = async (req, res) => {
   try {
-    console.log("🔍 DEBUG - Starting updateStatus...");
-    console.log("Request body:", req.body);
-
-    // ✅ Get orderId and status from request body
+   
     const { orderId, status } = req.body;
 
     if (!orderId) {
@@ -439,7 +422,7 @@ const updateStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: "Status is required" });
     }
 
-    console.log(`🔄 Updating order ${orderId} to status: ${status}`);
+    
 
     const order = await orderModel.findById(orderId);
     if (!order) {
@@ -448,18 +431,18 @@ const updateStatus = async (req, res) => {
 
     const previousStatus = order.status;
 
-    // ✅ Handle stock management based on status changes
+    
     if (status === "Cancelled" || status === "Refunded") {
       // If order is cancelled or refunded, increase stock back
       if (previousStatus !== "Cancelled" && previousStatus !== "Refunded") {
         await increaseProductStock(order.items);
-        console.log("✅ Stock restored due to order cancellation/refund");
+       
       }
     } else if ((previousStatus === "Cancelled" || previousStatus === "Refunded") && 
                (status !== "Cancelled" && status !== "Refunded")) {
       // If order was cancelled/refunded and is now being reactivated, decrease stock again
       await decreaseProductStock(order.items);
-      console.log("✅ Stock decreased again due to order reactivation");
+     
     }
 
     const updatedOrder = await orderModel.findByIdAndUpdate(
@@ -468,7 +451,7 @@ const updateStatus = async (req, res) => {
       { new: true } // Return the updated document
     );
 
-    console.log("✅ Order status updated successfully");
+    
 
     res.json({ 
       success: true, 
@@ -476,7 +459,7 @@ const updateStatus = async (req, res) => {
       order: updatedOrder 
     });
   } catch (error) {
-    console.error("❌ updateStatus error:", error);
+    console.error(" updateStatus error:", error);
     
     // If stock management failed, return specific error
     if (error.message.includes('Insufficient stock') || error.message.includes('Size not available')) {
@@ -493,9 +476,9 @@ const updateStatus = async (req, res) => {
   }
 };
 
-// ---------------------
+
 // Get Single Order Details
-// ---------------------
+
 const getOrderDetails = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -514,9 +497,9 @@ const getOrderDetails = async (req, res) => {
   }
 };
 
-// ---------------------
+
 // Cancel Order (User)
-// ---------------------
+
 const cancelOrder = async (req, res) => {
   try {
     const { orderId } = req.body;

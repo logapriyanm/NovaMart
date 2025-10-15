@@ -12,7 +12,7 @@ const ProfileSidebar = ({ activeSection, setActiveSection, handleLogout, onMobil
   const handleItemClick = (key) => {
     setActiveSection(key);
     if (onMobileItemClick) {
-      onMobileItemClick(); // This will close the sidebar on mobile
+      onMobileItemClick(); 
     }
   };
 

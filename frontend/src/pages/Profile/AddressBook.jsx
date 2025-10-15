@@ -60,7 +60,7 @@ const AddressBook = () => {
 
     try {
       const response = await axios.post(
-        `${backendUrl}/api/user/addresses`, // Updated route
+        `${backendUrl}/api/user/addresses`, 
         formData,
         {
           headers: {

@@ -1,4 +1,4 @@
-// routes/productRoute.js - SECURE VERSION
+
 import express from "express"
 import upload from "../middleware/multer.js";
 import adminAuth from "../middleware/adminAuth.js";

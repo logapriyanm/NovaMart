@@ -15,7 +15,7 @@ const Customers = ({ token }) => {
       setLoading(true)
       setError(null)
       
-      // Fetch all orders to extract customer information
+      
       const response = await axios.get(`${backendUrl}/api/order/admin/all`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -23,7 +23,7 @@ const Customers = ({ token }) => {
       if (response.data.success) {
         const orders = response.data.orders || []
         
-        // Extract unique customers from orders
+        
         const customerMap = new Map()
         
         orders.forEach(order => {
@@ -41,7 +41,7 @@ const Customers = ({ token }) => {
                 lastOrder: order.date
               })
             } else {
-              // Update existing customer
+             
               const existingCustomer = customerMap.get(email)
               existingCustomer.totalOrders += 1
               if (new Date(order.date) > new Date(existingCustomer.lastOrder)) {
@@ -75,7 +75,7 @@ const Customers = ({ token }) => {
       setLoading(true)
       setError(null)
       
-      // First try the direct customers endpoint
+     
       const response = await axios.get(`${backendUrl}/api/customers`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -90,7 +90,7 @@ const Customers = ({ token }) => {
       }
     } catch (error) {
       console.log('Customers endpoint not available, falling back to orders data...')
-      // If direct customers endpoint fails, fall back to orders data
+      
       await fetchCustomersFromOrders()
     } finally {
       setLoading(false)
@@ -283,7 +283,7 @@ const Customers = ({ token }) => {
         </div>
       )}
 
-      {/* Info banner if using fallback data */}
+     
       {customers.length > 0 && customers[0]?._id?.includes('customer_') && (
         <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center gap-2 text-blue-800 text-sm">

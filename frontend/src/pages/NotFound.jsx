@@ -6,7 +6,7 @@ const NotFound = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
-        {/* Error Code */}
+        
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-300 mb-4">404</h1>
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
@@ -17,7 +17,7 @@ const NotFound = () => {
           </p>
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="space-y-4 sm:space-y-0 flex flex-col gap-4 sm:space-x-4 sm:justify-center">
           <button
             onClick={() => window.history.back()}
@@ -44,7 +44,7 @@ const NotFound = () => {
           </Link>
         </div>
 
-        {/* Additional Help */}
+        
         <div className="mt-8 pt-6 border-t border-gray-200">
           <p className="text-sm text-gray-500">
             Can't find what you're looking for?{' '}

@@ -59,7 +59,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     }
   ]
 
-  // Auto-open dropdown if current path matches any sub-item
+ 
   React.useEffect(() => {
     menuItems.forEach(item => {
       if (item.type === 'dropdown') {
@@ -75,11 +75,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <>
-      {/* Desktop Sidebar - Left side */}
+      {/* Left side */}
       <div className='w-64 h-screen fixed left-0 top-0 pt-20 border-r-2 border-gray-200 bg-white z-30 overflow-y-auto hidden lg:block'>
-        {/* Logo Section */}
+       
       
-        {/* Navigation Menu */}
+       
         <div className='flex flex-col gap-1 pt-4 px-4 text-[15px]'>
           {menuItems.map((item, index) => (
             <div key={item.key || item.path}>
@@ -145,11 +145,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         </div>
       </div>
 
-      {/* Mobile Sidebar - Right side */}
+      {/* Right side */}
       <div className={`fixed inset-0 z-50 lg:hidden transition-opacity duration-300 ${
         isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
       }`}>
-        {/* Backdrop */}
+     
         <div 
           className={`absolute inset-0 bg-black transition-opacity duration-300 ${
             isOpen ? 'opacity-50' : 'opacity-0'
@@ -157,11 +157,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           onClick={() => setIsOpen(false)}
         />
         
-        {/* Sidebar Panel */}
+        
         <div className={`absolute top-0 right-0 h-full w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
-          {/* Mobile Header */}
+         
           <div className="p-4 border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
@@ -251,7 +251,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
             <button 
               onClick={() => {
-                // Handle logout
+                
                 setIsOpen(false)
               }}
               className="flex items-center gap-3 w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors text-lg font-medium"

@@ -91,21 +91,17 @@ const registerUser = async (req, res) => {
   }
 };
 
-// --------------------- ADMIN LOGIN ---------------------
+
 // --------------------- ADMIN LOGIN ---------------------
 const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log("🔐 Admin login attempt:", { 
-      email, 
-      expectedEmail: process.env.ADMIN_EMAIL,
-      envLoaded: !!process.env.ADMIN_EMAIL 
-    });
+   
 
     // Check if environment variables are loaded
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
-      console.error("❌ Admin credentials not found in environment");
+      console.error(" Admin credentials not found in environment");
       return res.status(500).json({ 
         success: false, 
         message: "Admin configuration error" 
@@ -116,7 +112,7 @@ const adminLogin = async (req, res) => {
       let adminUser = await userModel.findOne({ email: process.env.ADMIN_EMAIL });
       
       if (!adminUser) {
-        console.log("📝 Creating new admin user in database...");
+       
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, salt);
         
@@ -127,7 +123,7 @@ const adminLogin = async (req, res) => {
           role: "admin"
         });
         await adminUser.save();
-        console.log("✅ Admin user created in database");
+       
       }
 
       const token = jwt.sign({ 
@@ -136,7 +132,7 @@ const adminLogin = async (req, res) => {
         email: adminUser.email 
       }, process.env.JWT_SECRET, { expiresIn: "7d" });
       
-      console.log("✅ Admin login successful");
+      
       
       return res.json({ 
         success: true, 
@@ -150,14 +146,14 @@ const adminLogin = async (req, res) => {
       });
     }
 
-    console.log("❌ Invalid admin credentials");
+    console.log(" Invalid admin credentials");
     return res.status(401).json({ 
       success: false, 
       message: "Invalid admin credentials" 
     });
     
   } catch (error) {
-    console.error("💥 Admin login error:", error);
+    console.error(" Admin login error:", error);
     res.status(500).json({ 
       success: false, 
       message: "Server error during login: " + error.message 
@@ -223,7 +219,7 @@ const updateProfile = async (req, res) => {
     // Handle profile picture upload
     if (req.file) {
       try {
-        console.log("Uploading profile picture to Cloudinary...");
+       
         
         // Upload to Cloudinary
         const result = await cloudinary.uploader.upload(req.file.path, {
@@ -303,7 +299,7 @@ const updateProfile = async (req, res) => {
 
 // --------------------- ADDRESS MANAGEMENT ---------------------
 
-// Get user addresses
+
 const getAddresses = async (req, res) => {
   try {
     const user = await userModel.findById(req.user.id);

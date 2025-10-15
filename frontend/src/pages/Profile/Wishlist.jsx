@@ -11,7 +11,7 @@ const Wishlist = () => {
 
   const [selectedSize, setSelectedSize] = useState({});
 
-  // ✅ Show login prompt if no token
+  
   if (!token) {
     return (
       <div className="text-center py-8">

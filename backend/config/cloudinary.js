@@ -5,7 +5,7 @@ dotenv.config()
 
 const connectCloudinary = () => {
   try {
-    // ✅ Verify all required environment variables exist
+  
     const required = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_SECRET_KEY'];
     const missing = required.filter(key => !process.env[key]);
     
@@ -17,13 +17,13 @@ const connectCloudinary = () => {
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
       api_secret: process.env.CLOUDINARY_SECRET_KEY,
-      secure: true // ✅ Force HTTPS
+      secure: true 
     });
 
 
     
   } catch (error) {
-    console.error("❌ Cloudinary connection failed:", error.message);
+    console.error(" Cloudinary connection failed:", error.message);
     throw error; // Re-throw to stop server startup
   }
 }
