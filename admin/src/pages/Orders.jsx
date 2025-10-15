@@ -164,7 +164,7 @@ const Orders = ({ token }) => {
           <p className="font-semibold">{label}</p>
           {payload.map((entry, index) => (
             <p key={index} style={{ color: entry.color }}>
-              {entry.name === 'revenue' ? `${currency}${entry.value.toLocaleString()}` : `${entry.value} orders`}
+              {entry.name === 'revenue' ? `${currency}${entry.value.toLocaleString()}` : `${entry.value} Rupees`}
             </p>
           ))}
         </div>

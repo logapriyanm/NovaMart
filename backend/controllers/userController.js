@@ -340,7 +340,7 @@ const addAddress = async (req, res) => {
       isDefault: isDefault || false
     };
 
-    // If setting as default, remove default from other addresses
+    
     if (isDefault) {
       user.addresses.forEach(addr => {
         addr.isDefault = false;

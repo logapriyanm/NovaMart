@@ -511,7 +511,7 @@ const cancelOrder = async (req, res) => {
       return res.status(404).json({ success: false, message: "Order not found" });
     }
 
-    // Only allow cancellation for orders that are not shipped/delivered
+    
     const nonCancellableStatuses = ["Shipped", "Out for Delivery", "Delivered"];
     if (nonCancellableStatuses.includes(order.status)) {
       return res.status(400).json({ 
@@ -520,7 +520,7 @@ const cancelOrder = async (req, res) => {
       });
     }
 
-    // Increase stock back
+    // Increase stock 
     await increaseProductStock(order.items);
 
     order.status = "Cancelled";

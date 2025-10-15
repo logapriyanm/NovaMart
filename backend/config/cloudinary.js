@@ -1,4 +1,3 @@
-// config/cloudinary.js - ENHANCED VERSION
 import { v2 as cloudinary } from 'cloudinary'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -24,7 +23,7 @@ const connectCloudinary = () => {
     
   } catch (error) {
     console.error(" Cloudinary connection failed:", error.message);
-    throw error; // Re-throw to stop server startup
+    throw error; 
   }
 }
 
