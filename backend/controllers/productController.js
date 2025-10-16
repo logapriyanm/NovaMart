@@ -23,7 +23,6 @@ const addProduct = async (req, res) => {
       bestseller,
     } = req.body;
 
-    // Collect uploaded images from req.files
     const images = ["image1", "image2", "image3", "image4"]
       .map((img) => req.files?.[img]?.[0])
       .filter(Boolean);
@@ -31,7 +30,6 @@ const addProduct = async (req, res) => {
     let imagesUrl = [];
 
     if (images.length > 0) {
-      // Test Cloudinary config first
       try {
         const testResult = await cloudinary.api.ping();
       } catch (pingError) {
@@ -46,7 +44,6 @@ const addProduct = async (req, res) => {
               resource_type: "auto",
             });
 
-            // Delete local file
             try {
               if (fs.existsSync(file.path)) {
                 fs.unlinkSync(file.path);
@@ -250,7 +247,6 @@ const updateProduct = async (req, res) => {
   }
 };
 
-
 const listProduct = async (req, res) => {
   try {
     const products = await productModel.find({});
@@ -264,14 +260,14 @@ const listProduct = async (req, res) => {
 const removeProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Find the product first to get image URLs
     const product = await productModel.findById(id);
-    
+
     if (!product) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Product not found" 
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
       });
     }
 
@@ -279,31 +275,34 @@ const removeProduct = async (req, res) => {
     if (product.image && product.image.length > 0) {
       try {
         // Extract public IDs from Cloudinary URLs
-        const deletePromises = product.image.map(imageUrl => {
-          const publicId = imageUrl.split('/').pop().split('.')[0];
+        const deletePromises = product.image.map((imageUrl) => {
+          const publicId = imageUrl.split("/").pop().split(".")[0];
           return cloudinary.uploader.destroy(`products/${publicId}`);
         });
-        
+
         await Promise.all(deletePromises);
-        console.log('🗑️ Cloudinary images deleted');
+        console.log("🗑️ Cloudinary images deleted");
       } catch (cloudinaryError) {
-        console.warn('⚠️ Could not delete Cloudinary images:', cloudinaryError.message);
+        console.warn(
+          "⚠️ Could not delete Cloudinary images:",
+          cloudinaryError.message
+        );
         // Continue with product deletion even if image deletion fails
       }
     }
 
     // Delete product from database
     await productModel.findByIdAndDelete(id);
-    
-    res.json({ 
-      success: true, 
-      message: "Product permanently deleted" 
+
+    res.json({
+      success: true,
+      message: "Product permanently deleted",
     });
   } catch (error) {
     console.log("Delete product error:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: error.message 
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

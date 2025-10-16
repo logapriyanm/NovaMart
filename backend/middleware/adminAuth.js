@@ -1,4 +1,3 @@
-// middleware/adminAuth.js - FOR DEPLOYED BACKEND
 import jwt from "jsonwebtoken";
 
 const adminAuth = async (req, res, next) => {

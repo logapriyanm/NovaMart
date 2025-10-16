@@ -2,11 +2,13 @@ import axios from "axios"
 import { useState } from 'react';
 import { backendUrl } from "../App";
 import { toast } from 'react-toastify'
+import { FiEye, FiEyeOff } from 'react-icons/fi'
 
 const Login = ({ setToken }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const onSubmitHandler = async (e) => {
     try {
@@ -44,6 +46,10 @@ const Login = ({ setToken }) => {
     }
   }
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
+
   return (
     <div className='flex min-h-screen items-center justify-center w-full bg-gradient-to-br from-blue-50 to-gray-100'>
       <div className='bg-white shadow-xl rounded-2xl px-8 py-10 max-w-md w-full mx-4'>
@@ -67,14 +73,27 @@ const Login = ({ setToken }) => {
           
           <div className='mb-6'>
             <label className='block text-sm font-medium text-gray-700 mb-2'>Password</label>
-            <input 
-              onChange={(e) => setPassword(e.target.value)} 
-              value={password} 
-              className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all' 
-              type="password" 
-              placeholder='Enter admin password' 
-              required
-            />
+            <div className="relative">
+              <input 
+                onChange={(e) => setPassword(e.target.value)} 
+                value={password} 
+                className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all pr-12' 
+                type={showPassword ? "text" : "password"} 
+                placeholder='Enter admin password' 
+                required
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors focus:outline-none"
+              >
+                {showPassword ? (
+                  <FiEyeOff className="w-5 h-5" />
+                ) : (
+                  <FiEye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
           
           <button 
