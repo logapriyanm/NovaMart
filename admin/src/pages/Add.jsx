@@ -19,8 +19,9 @@ const Add = ({ token }) => {
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
   const [stockQuantity, setStockQuantity] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  
   const subCategoriesMap = {
     Fashion: ["Men", "Women", "Kids"],
     Electronics: ["Mobile", "Laptops", "Accessories", "Others"],
@@ -32,39 +33,36 @@ const Add = ({ token }) => {
     Others: ["Others"]
   };
 
- 
   const shouldUseSizes = (cat) => {
     const sizeCategories = ['Fashion', 'Clothing', 'Apparel'];
     return sizeCategories.includes(cat);
   };
 
   useEffect(() => {
-    
     setSubCategory(subCategoriesMap[category][0]);
-    
     
     if (!shouldUseSizes(category)) {
       setSizes([{ size: "One Size", quantity: stockQuantity }]);
     }
   }, [category]);
 
-  
   useEffect(() => {
     if (shouldUseSizes(category)) {
-      
       const initialSizes = ["S", "M", "L", "XL", "XXL"].map(size => ({
         size,
         quantity: 0
       }));
       setSizes(initialSizes);
     } else {
-      
       setSizes([{ size: "One Size", quantity: stockQuantity }]);
     }
   }, []);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setIsSuccess(false);
+    
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -74,11 +72,9 @@ const Add = ({ token }) => {
       formData.append("subCategory", subCategory);
       formData.append("bestseller", bestseller);
       
-      
       let sizesToSend = [];
       
       if (shouldUseSizes(category)) {
-      
         sizesToSend = sizes
           .filter(item => item.quantity > 0)
           .map(item => ({
@@ -86,7 +82,6 @@ const Add = ({ token }) => {
             quantity: item.quantity
           }));
       } else {
-       
         sizesToSend = [{
           size: "One Size",
           quantity: stockQuantity
@@ -94,7 +89,6 @@ const Add = ({ token }) => {
       }
     
       formData.append("sizes", JSON.stringify(sizesToSend));
-      
       
       if (image1) formData.append("image1", image1);
       if (image2) formData.append("image2", image2);
@@ -116,6 +110,7 @@ const Add = ({ token }) => {
 
       if (response.data.success) {
         toast.success(response.data.message);
+        setIsSuccess(true);
         // Reset form
         setName("");
         setDescription("");
@@ -133,16 +128,22 @@ const Add = ({ token }) => {
         } else {
           setSizes([{ size: "One Size", quantity: 0 }]);
         }
+
+        // Reset success state after 3 seconds
+        setTimeout(() => {
+          setIsSuccess(false);
+        }, 1000);
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Axios error:", error);
       toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Handle size quantity change for fashion products
   const handleSizeChange = (size, quantity) => {
     setSizes(prev => 
       prev.map(item => 
@@ -151,11 +152,41 @@ const Add = ({ token }) => {
     );
   };
 
-  // Handle stock quantity change for non-fashion products
   const handleStockChange = (quantity) => {
     const newQuantity = Number(quantity) || 0;
     setStockQuantity(newQuantity);
     setSizes([{ size: "One Size", quantity: newQuantity }]);
+  };
+
+  const getButtonContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center gap-2">
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          Adding Product...
+        </div>
+      );
+    }
+    
+    if (isSuccess) {
+      return "Product Added ";
+    }
+    
+    return "ADD PRODUCT";
+  };
+
+  const getButtonClass = () => {
+    const baseClass = "px-8 cursor-pointer py-3 rounded-lg transition-colors font-medium w-64 flex items-center justify-center";
+    
+    if (isLoading) {
+      return `${baseClass} bg-blue-400 text-white cursor-not-allowed`;
+    }
+    
+    if (isSuccess) {
+      return `${baseClass} bg-green-600 text-white hover:bg-green-700`;
+    }
+    
+    return `${baseClass} bg-blue-600 text-white hover:bg-blue-700`;
   };
 
   return (
@@ -329,8 +360,12 @@ const Add = ({ token }) => {
           </label>
         </div>
 
-        <button type="submit" className="px-8 cursor-pointer py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-          ADD PRODUCT
+        <button 
+          type="submit" 
+          className={getButtonClass()}
+          disabled={isLoading}
+        >
+          {getButtonContent()}
         </button>
       </form>
     </div>

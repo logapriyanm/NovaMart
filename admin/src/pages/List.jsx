@@ -368,14 +368,14 @@ const List = ({ token }) => {
               <div className="md:col-span-2 flex justify-center gap-2">
                 <button
                   onClick={() => editProduct(item)}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200"
+                  className="p-2 text-blue-600 cursor-pointer hover:bg-blue-50 rounded-lg transition-colors border border-blue-200"
                   title="Edit Product"
                 >
                   <FiEdit className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => removeProduct(item._id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-200"
+                  className="p-2 text-red-600 cursor-pointer hover:bg-red-50 rounded-lg transition-colors border border-red-200"
                   title="Delete Product"
                 >
                   <FiTrash2 className="w-4 h-4" />

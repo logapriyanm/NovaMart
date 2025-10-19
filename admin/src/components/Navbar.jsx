@@ -29,7 +29,7 @@ const Navbar = ({ setToken, toggleSidebar }) => {
             className="flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium border border-red-200"
           >
             <FiLogOut className="w-4 h-4" />
-            <span className="hidden sm:inline">Logout</span>
+            <span className="hidden sm:inline cursor-pointer">Logout</span>
           </button>
 
           {/* Mobile Menu Button */}
