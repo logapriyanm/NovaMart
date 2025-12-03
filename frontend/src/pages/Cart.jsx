@@ -76,7 +76,7 @@ const Cart = () => {
         </div>
 
         {cartData.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center min-h-screen flex flex-col justify-center items-center ">
             <p className="text-gray-500 text-lg mb-4">Your cart is empty</p>
             <button 
               onClick={() => navigate("/")}
