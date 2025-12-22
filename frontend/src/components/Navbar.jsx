@@ -3,11 +3,11 @@ import { assets } from "../assets/assets";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { 
-  FaRegUser, 
-  FaRegHeart, 
-  FaSearch, 
-  FaTimes, 
+import {
+  FaRegUser,
+  FaRegHeart,
+  FaSearch,
+  FaTimes,
   FaFilter,
   FaUser,
   FaBox,
@@ -20,12 +20,12 @@ const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  
-  const { 
-    search, 
-    setSearch, 
-    getCartCount, 
-    navigate, 
+
+  const {
+    search,
+    setSearch,
+    getCartCount,
+    navigate,
     token,
     user,
     // Filter states and functions from context
@@ -41,7 +41,7 @@ const Navbar = () => {
     clearAllFilters,
     getActiveFilterCount
   } = useContext(ShopContext);
-  
+
   const location = useLocation();
   const [showSearchIcon, setShowSearchIcon] = useState(false);
 
@@ -55,7 +55,7 @@ const Navbar = () => {
     }
   }, [location]);
 
-  
+
   const getPriceDisplayText = () => {
     if (priceRange[0] === 0 && priceRange[1] === maxPrice) {
       return 'All Prices';
@@ -69,9 +69,9 @@ const Navbar = () => {
       <div className="flex items-center px-4 sm:px-6 md:px-8 lg:px-10 justify-between py-3 font-medium">
         {/* Logo */}
         <Link to={"/"}>
-         <p className="font-bold text-transparent bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-lg">
-                Novamart
-              </p>
+          <p className="font-bold text-transparent bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-lg">
+            Novamart
+          </p>
         </Link>
 
         {/* Middle Nav Links (Desktop only) */}
@@ -95,19 +95,19 @@ const Navbar = () => {
           {/* Search Icon */}
           {showSearchIcon && (
             <button onClick={() => setSearchBar(!searchBar)} className="text-gray-600 hover:text-black transition-colors">
-              <FaSearch size={18}  className="cursor-pointer"/>
+              <FaSearch size={18} className="cursor-pointer" />
             </button>
           )}
 
-          
-          <button 
-            onClick={() => token ? navigate("/profile") : navigate("/login")} 
+
+          <button
+            onClick={() => token ? navigate("/profile") : navigate("/login")}
             className="text-gray-600 cursor-pointer hover:text-black transition-colors"
           >
             {token && user?.profilePic ? (
-              <img 
-                src={user.profilePic} 
-                alt="Profile" 
+              <img
+                src={user.profilePic}
+                alt="Profile"
                 className="w-7 h-7 rounded-full object-cover border border-gray-300"
               />
             ) : (
@@ -171,9 +171,9 @@ const Navbar = () => {
             <div className="p-4 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center gap-3">
                 {user.profilePic ? (
-                  <img 
-                    src={user.profilePic} 
-                    alt="Profile" 
+                  <img
+                    src={user.profilePic}
+                    alt="Profile"
                     className="w-10 h-10 rounded-full object-cover border border-gray-300"
                   />
                 ) : (
@@ -202,8 +202,7 @@ const Navbar = () => {
                 to={item.to}
                 onClick={() => setVisible(false)}
                 className={({ isActive }) =>
-                  `block py-4 px-4 border-b border-gray-100 text-gray-700 hover:bg-gray-50 hover:text-black transition-colors ${
-                    isActive ? "bg-gray-50 text-black font-semibold" : ""
+                  `block py-4 px-4 border-b border-gray-100 text-gray-700 hover:bg-gray-50 hover:text-black transition-colors ${isActive ? "bg-gray-50 text-black font-semibold" : ""
                   }`
                 }
               >
@@ -218,9 +217,9 @@ const Navbar = () => {
                   <h3 className="font-semibold text-gray-900 mb-3">My Account</h3>
                   <div className="space-y-2">
                     <button
-                      onClick={() => { 
-                        setVisible(false); 
-                        navigate("/profile", { state: { activeSection: "personal" } }); 
+                      onClick={() => {
+                        setVisible(false);
+                        navigate("/profile", { state: { activeSection: "personal" } });
                       }}
                       className="w-full flex items-center gap-3 p-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     >
@@ -228,9 +227,9 @@ const Navbar = () => {
                       <span>Personal Info</span>
                     </button>
                     <button
-                      onClick={() => { 
-                        setVisible(false); 
-                        navigate("/profile", { state: { activeSection: "orders" } }); 
+                      onClick={() => {
+                        setVisible(false);
+                        navigate("/profile", { state: { activeSection: "orders" } });
                       }}
                       className="w-full flex items-center gap-3 p-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     >
@@ -238,9 +237,9 @@ const Navbar = () => {
                       <span>Orders</span>
                     </button>
                     <button
-                      onClick={() => { 
-                        setVisible(false); 
-                        navigate("/profile", { state: { activeSection: "wishlist" } }); 
+                      onClick={() => {
+                        setVisible(false);
+                        navigate("/profile", { state: { activeSection: "wishlist" } });
                       }}
                       className="w-full flex items-center gap-3 p-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     >
@@ -248,9 +247,9 @@ const Navbar = () => {
                       <span>Wishlist</span>
                     </button>
                     <button
-                      onClick={() => { 
-                        setVisible(false); 
-                        navigate("/profile", { state: { activeSection: "addresses" } }); 
+                      onClick={() => {
+                        setVisible(false);
+                        navigate("/profile", { state: { activeSection: "addresses" } });
                       }}
                       className="w-full flex items-center gap-3 p-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     >
@@ -258,15 +257,27 @@ const Navbar = () => {
                       <span>Addresses</span>
                     </button>
                     <button
-                      onClick={() => { 
-                        setVisible(false); 
-                        navigate("/profile", { state: { activeSection: "settings" } }); 
+                      onClick={() => {
+                        setVisible(false);
+                        navigate("/profile", { state: { activeSection: "settings" } });
                       }}
                       className="w-full flex items-center gap-3 p-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     >
                       <FaCog size={16} />
                       <span>Settings</span>
                     </button>
+                    {user?.role === 'admin' && (
+                      <button
+                        onClick={() => {
+                          setVisible(false);
+                          navigate("/admin/dashboard");
+                        }}
+                        className="w-full flex items-center gap-3 p-3 text-left text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-100"
+                      >
+                        <FaCog size={16} />
+                        <span>Admin Panel</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -304,11 +315,10 @@ const Navbar = () => {
                     <button
                       onClick={clearAllFilters}
                       disabled={getActiveFilterCount() === 0}
-                      className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
-                        getActiveFilterCount() === 0
+                      className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors ${getActiveFilterCount() === 0
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           : 'bg-gray-800 text-white hover:bg-gray-900'
-                      }`}
+                        }`}
                     >
                       Clear All Filters
                     </button>
@@ -345,7 +355,7 @@ const Navbar = () => {
                           <span>₹{priceRange[0].toLocaleString()}</span>
                           <span>₹{priceRange[1].toLocaleString()}</span>
                         </div>
-                        
+
                         {/* Quick Price Buttons */}
                         <div className='flex flex-wrap gap-2'>
                           {[
@@ -357,11 +367,10 @@ const Navbar = () => {
                             <button
                               key={`${min}-${max}`}
                               onClick={() => handlePriceChange(min, max)}
-                              className={`px-2 py-1 text-xs border rounded transition-colors flex-1 min-w-[60px] ${
-                                priceRange[0] === min && priceRange[1] === max
+                              className={`px-2 py-1 text-xs border rounded transition-colors flex-1 min-w-[60px] ${priceRange[0] === min && priceRange[1] === max
                                   ? 'bg-black text-white border-black'
                                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                              }`}
+                                }`}
                             >
                               ₹{min}-{max}
                             </button>
@@ -409,13 +418,13 @@ const Navbar = () => {
           <div className="p-4 border-t border-gray-200">
             {token ? (
               <div className="space-y-3">
-                <button 
-                  onClick={() => { setVisible(false); navigate("/profile"); }} 
+                <button
+                  onClick={() => { setVisible(false); navigate("/profile"); }}
                   className="w-full py-3 px-4 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors text-center font-medium"
                 >
                   My Account
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     localStorage.removeItem("token");
                     setVisible(false);

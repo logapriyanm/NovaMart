@@ -19,8 +19,8 @@ orderRouter.post('/stripe', authUser, placeOrderStripe);
 orderRouter.get('/user', authUser, userOrders);
 orderRouter.post('/verifyStripe', authUser, verifyStripe);
 
-// Admin routes
-orderRouter.get('/admin/all', adminAuth, allOrders);
-orderRouter.put('/admin/status', adminAuth, updateStatus);
+// Admin/Seller routes
+orderRouter.get('/admin/all', authUser, allOrders);
+orderRouter.put('/admin/status', authUser, updateStatus);
 
 export default orderRouter;

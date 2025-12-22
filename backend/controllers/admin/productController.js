@@ -1,8 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
-import productModel from "../models/productModel.js";
-
-// Add product
+import productModel from "../../models/productModel.js";
 
 // Add product
 const addProduct = async (req, res) => {
@@ -44,7 +42,6 @@ const addProduct = async (req, res) => {
               folder: "products",
               resource_type: "auto",
             });
-            // Cleanup local
              if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
             return result.secure_url;
           })
@@ -55,7 +52,6 @@ const addProduct = async (req, res) => {
       }
     }
 
-    // Parse sizes JSON
     let parsedSizes = [];
     if (sizes) {
       try {
@@ -78,8 +74,8 @@ const addProduct = async (req, res) => {
       sizes: parsedSizes,
       image: imagesUrl,
       date: Date.now(),
-      owner: userId, // Assign owner
-      isApproved: userRole === "admin" ? true : false // Auto-approve if admin
+      owner: userId, 
+      isApproved: userRole === "admin" ? true : false 
     };
 
     const product = new productModel(productData);
@@ -123,7 +119,6 @@ const updateProduct = async (req, res) => {
       bestseller,
     } = req.body;
 
-    // Update fields
     if (name !== undefined) product.name = name;
     if (description !== undefined) product.description = description;
     if (price !== undefined) product.price = Number(price);
@@ -135,7 +130,6 @@ const updateProduct = async (req, res) => {
     if (sizes) {
       try {
         const parsedSizes = JSON.parse(sizes);
-        // Basic repair logic (simplified for brevity, keep robust logic if needed)
          const validSizes = parsedSizes.filter(
           (sizeObj) => sizeObj && sizeObj.size && sizeObj.size.trim() !== ""
         );
@@ -143,7 +137,6 @@ const updateProduct = async (req, res) => {
       } catch (parseError) {}
     }
 
-    // Handle new images
     const images = ["image1", "image2", "image3", "image4"]
       .map((img) => req.files?.[img]?.[0])
       .filter(Boolean);
@@ -159,8 +152,6 @@ const updateProduct = async (req, res) => {
       product.image = [...product.image, ...imagesUrl].slice(0, 4);
     }
     
-    // If updated by seller, maybe reset approval? Let's keep it simple for now (no reset).
-
     await product.save();
     res.json({ success: true, message: "Product updated successfully", product });
 
@@ -170,14 +161,40 @@ const updateProduct = async (req, res) => {
   }
 };
 
-// Public List (Approved Only)
-const listProduct = async (req, res) => {
+// Remove product
+const removeProduct = async (req, res) => {
   try {
-    const products = await productModel.find({ isApproved: true });
-    res.json({ success: true, products });
+    const { id } = req.params;
+    const userRole = req.user.role;
+    const userId = req.user.id;
+
+    const product = await productModel.findById(id);
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+     // Check ownership
+    if (userRole !== "admin" && product.owner.toString() !== userId) {
+      return res.status(403).json({ success: false, message: "Not authorized to delete this product" });
+    }
+
+    if (product.image && product.image.length > 0) {
+      try {
+        const deletePromises = product.image.map((imageUrl) => {
+          const publicId = imageUrl.split("/").pop().split(".")[0];
+          return cloudinary.uploader.destroy(`products/${publicId}`);
+        });
+        await Promise.all(deletePromises);
+      } catch (cloudError) {}
+    }
+
+    await productModel.findByIdAndDelete(id);
+
+    res.json({ success: true, message: "Product permanently deleted" });
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: error.message });
+    console.log("Delete product error:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -201,85 +218,9 @@ const adminListProduct = async (req, res) => {
   }
 };
 
-const removeProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const userRole = req.user.role;
-    const userId = req.user.id;
-
-    const product = await productModel.findById(id);
-
-    if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
-    }
-
-     // Check ownership
-    if (userRole !== "admin" && product.owner.toString() !== userId) {
-      return res.status(403).json({ success: false, message: "Not authorized to delete this product" });
-    }
-
-    // Delete images
-    if (product.image && product.image.length > 0) {
-      try {
-        const deletePromises = product.image.map((imageUrl) => {
-          const publicId = imageUrl.split("/").pop().split(".")[0];
-          return cloudinary.uploader.destroy(`products/${publicId}`);
-        });
-        await Promise.all(deletePromises);
-      } catch (cloudError) {}
-    }
-
-    // Delete product
-    await productModel.findByIdAndDelete(id);
-
-    res.json({ success: true, message: "Product permanently deleted" });
-  } catch (error) {
-    console.log("Delete product error:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-const singleProduct = async (req, res) => {
-  try {
-    // Check if body has productId (legacy) or params (restful)
-    // The route definition uses :id so req.params.id is standard. 
-    // However, legacy code used req.body.productId. Let's support both or fix frontend.
-    // Given the route change to GET /single/:id, we must use req.params.
-    const productId = req.params.id || req.body.productId; 
-    
-    const product = await productModel.findById(productId);
-    res.json({ success: true, product });
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: error.message });
-  }
-};
-
-const checkStock = async (req, res) => {
-  try {
-    const { productId, size } = req.body;
-    const product = await productModel.findById(productId);
-
-    if (!product)
-      return res.status(404).json({ success: false, message: "Product not found" });
-
-    const sizeInfo = product.sizes.find((s) => s.size === size);
-    if (!sizeInfo)
-      return res.status(400).json({ success: false, message: "Size not available" });
-
-    res.json({ success: true, stock: sizeInfo.quantity });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
 export {
   addProduct,
   updateProduct,
-  checkStock,
-  listProduct,
   removeProduct,
-  singleProduct,
   adminListProduct
 };

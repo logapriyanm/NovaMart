@@ -12,6 +12,7 @@ const Login = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("user");
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -22,13 +23,19 @@ const Login = () => {
           name,
           email,
           password,
+          role
         });
 
         if (response.data.success) {
           setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
           toast.success("Account created successfully!");
-          navigate("/");
+          toast.success("Account created successfully!");
+          if (response.data.role === "admin") {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/");
+          }
         } else {
           console.log(response.data.message);
           toast.error(response.data.message);
@@ -43,7 +50,12 @@ const Login = () => {
           setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
           toast.success("Logged in successfully!");
-          navigate("/");
+          toast.success("Logged in successfully!");
+          if (response.data.role === "admin") {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/");
+          }
         } else {
           toast.error(response.data.message);
         }
@@ -77,7 +89,7 @@ const Login = () => {
         </p>
       </div>
 
-      
+
       {mode === "signup" && (
         <div className="w-full relative">
           <input
@@ -88,6 +100,19 @@ const Login = () => {
             placeholder="Name"
             required
           />
+        </div>
+      )}
+
+      {mode === "signup" && (
+        <div className="w-full relative">
+          <select
+            onChange={(e) => setRole(e.target.value)}
+            value={role}
+            className="w-full px-3 py-2 border border-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          >
+            <option value="user">User</option>
+            <option value="seller">Seller</option>
+          </select>
         </div>
       )}
 
@@ -125,15 +150,15 @@ const Login = () => {
           Forgot password?
         </p>
         {mode === "login" ? (
-          <p 
-            onClick={() => setMode("signup")} 
+          <p
+            onClick={() => setMode("signup")}
             className="cursor-pointer text-blue-600 hover:text-blue-800 transition-colors"
           >
             Create account
           </p>
         ) : (
-          <p 
-            onClick={() => setMode("login")} 
+          <p
+            onClick={() => setMode("login")}
             className="cursor-pointer text-blue-600 hover:text-blue-800 transition-colors"
           >
             Login here
@@ -141,7 +166,7 @@ const Login = () => {
         )}
       </div>
 
-      <button 
+      <button
         type="submit"
         className="bg-black text-white font-medium px-8 py-3 mt-4 cursor-pointer rounded hover:bg-gray-800 transition-colors w-full"
       >

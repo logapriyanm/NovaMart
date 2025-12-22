@@ -47,9 +47,18 @@ const productsSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User', // Changed 'user' to 'User' to follow common Mongoose model naming conventions
+      required: true
+    },
+    isApproved: {
+      type: Boolean,
+      default: false 
+    },
     date: {
-        type: Date,
-        default: Date.now
+        type: Number,
+        required: true
     }
 }, { timestamps: true });
 

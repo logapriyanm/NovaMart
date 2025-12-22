@@ -81,6 +81,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+  role: {
+    type: String,
+    enum: ["user", "admin", "seller"],
+    default: "user"
+  },
+  isApproved: {
+    type: Boolean,
+    default: true
+  },
+  shopName: {
+    type: String, 
+    default: ''
+  },
   date: {
     type: Date,
     default: Date.now,

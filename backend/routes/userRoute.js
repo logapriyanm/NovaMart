@@ -1,9 +1,7 @@
-
 import express from "express";
 import {
   registerUser,
   loginUser,
-  adminLogin,
   getProfile,
   updateProfile,
   toggleWishlist,
@@ -15,20 +13,23 @@ import {
   getAddresses,
   changePassword,
   updatePreferences,
-  deleteAccount
+  deleteAccount,
+  getAllSellers,
+  changeSellerStatus
 } from "../controllers/userController.js";
 import authUser from "../middleware/auth.js";
+import adminAuth from "../middleware/adminAuth.js";
 import upload from "../middleware/multer.js";
-import userModel from "../models/userModel.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 const userRouter = express.Router();
 
 // Public routes
 userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
-userRouter.post("/admin-login", adminLogin); 
+
+// Admin Routes
+userRouter.get("/sellers", adminAuth, getAllSellers);
+userRouter.put("/seller-status", adminAuth, changeSellerStatus);
 
 // Protected routes
 userRouter.get("/profile", authUser, getProfile);
@@ -49,7 +50,5 @@ userRouter.patch('/addresses/:addressId/default', authUser, setDefaultAddress);
 userRouter.post('/change-password', authUser, changePassword);
 userRouter.put('/preferences', authUser, updatePreferences);
 userRouter.delete('/account', authUser, deleteAccount);
-
-
 
 export default userRouter;
