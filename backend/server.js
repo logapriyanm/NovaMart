@@ -16,7 +16,7 @@ import userOrderRouter from './routes/user/orderRoute.js';
 import adminOrderRouter from './routes/admin/orderRoute.js';
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5000;
 
 connectCloudinary();
 connectDB();
@@ -70,7 +70,18 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(` Server started on PORT: ${port}`);
- 
-});
+// Wait for DB connection before starting server
+const startServer = async () => {
+  try {
+    await connectDB();
+    
+    app.listen(port, () => {
+      console.log(` Server started on PORT: ${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
